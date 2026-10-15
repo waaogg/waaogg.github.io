@@ -1,0 +1,17 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import { isPublished, formatDate } from '../lib/publication';
+interface Props { id: 'about' | 'now' | 'colophon'; eyebrow: string; }
+const { id, eyebrow } = Astro.props;
+const page = await getEntry('pages',id);
+const available = page && isPublished(page.data);
+const rendered = available ? await render(page) : undefined;
+const Content = rendered?.Content;
+---
+<BaseLayout title={available ? page.data.title : '内容暂未公开'} description={available ? page.data.description : ''} noindex={!available}>
+  <div class="narrow"><header class="page-head reveal"><p class="eyebrow">{eyebrow}</p><h1 data-pagefind-meta="title">{available ? page.data.title : '留一页空白'}<span class="accent">。</span></h1>{available && <><p>{page.data.description}</p><time class="meta" datetime={page.data.updatedDate.toISOString()}>更新于 {formatDate(page.data.updatedDate)}</time></>}</header>
+    {available && Content ? <article class="article-body reveal delay-1" id="article-content" data-pagefind-body><span hidden data-pagefind-ignore data-pagefind-meta="type">独立页面</span><Content /></article> : <p class="empty-state">这里的内容暂未公开。</p>}
+    <slot />
+  </div>
+</BaseLayout>

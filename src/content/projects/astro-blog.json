@@ -1,9 +1,18 @@
 {
-  "title": "Astro Notion Blog",
-  "description": "基于 Astro 5 + React 19 + Tailwind CSS v4 构建的 Notion 极简风个人独立博客模板，支持流体极光动效与全局搜索。",
-  "tech": ["Astro", "React", "Tailwind CSS", "TypeScript"],
-  "demoUrl": "https://example.com",
-  "githubUrl": "https://github.com",
-  "badge": "开源模板",
-  "featured": true
+  "schemaVersion": 1,
+  "contentId": "projects-astro-blog",
+  "publication": "published",
+  "title": "日常之间 · 个人手记",
+  "description": "将文章、日常、作品与书影音放在同一座小站里。以 Astro 静态生成为基础，支持独立云服务器部署。",
+  "tech": [
+    "Astro",
+    "React",
+    "Tailwind CSS",
+    "TypeScript"
+  ],
+  "demoUrl": "https://waaogg.github.io",
+  "githubUrl": "https://github.com/waaogg/waaogg.github.io",
+  "badge": "本站源码",
+  "featured": true,
+  "order": -1
 }

@@ -1,211 +1,58 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, SkipForward, SkipBack, Volume2, VolumeX, Disc3 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Play, Pause, SkipForward, Volume2, VolumeX, Disc3, ChevronUp, ChevronDown } from 'lucide-react';
 import { siteConfig } from '../site.config';
 
 export default function MusicPlayer() {
-  const tracks = siteConfig.music || [];
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const currentTrack = tracks[currentIdx] || {
-    title: 'Ambient Sound',
-    artist: 'Peaceful',
-    url: '',
-    cover: '/favicon.svg',
+  const tracks = siteConfig.music;
+  const [index, setIndex] = useState(0), [playing, setPlaying] = useState(false), [expanded, setExpanded] = useState(false);
+  const [time, setTime] = useState(0), [duration, setDuration] = useState(0), [muted, setMuted] = useState(false);
+  const [error, setError] = useState(''), [loading, setLoading] = useState(false);
+  const audio = useRef<HTMLAudioElement>(null);
+  const wantsPlay = useRef(false);
+  const widget = useRef<HTMLDivElement>(null);
+  const track = tracks[index];
+  const play = async () => {
+    if (!audio.current) return;
+    setError(''); setLoading(true);
+    try { await audio.current.play(); }
+    catch { setError('暂时无法播放，请重试或换一首。'); wantsPlay.current = false; setPlaying(false); }
+    finally { setLoading(false); }
   };
-
+  const choose = (next: number, resume = playing) => {
+    wantsPlay.current = resume;
+    if (next === index) { if (audio.current) audio.current.currentTime = 0; if (resume) void play(); return; }
+    setPlaying(false); setTime(0); setDuration(0); setError(''); setIndex(next);
+  };
+  useEffect(() => { if (wantsPlay.current) void play(); }, [index]);
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () => setDuration(audio.duration || 0);
-    const onEnded = () => handleNext();
-
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('loadedmetadata', onLoadedMetadata);
-    audio.addEventListener('ended', onEnded);
-
-    return () => {
-      audio.removeEventListener('timeupdate', onTimeUpdate);
-      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-      audio.removeEventListener('ended', onEnded);
-    };
-  }, [currentIdx]);
-
-  function togglePlay() {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      audio
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch((err) => {
-          console.warn('Autoplay prevented by browser:', err);
-          setIsPlaying(false);
-        });
-    }
-  }
-
-  function handleNext() {
-    if (tracks.length === 0) return;
-    const next = (currentIdx + 1) % tracks.length;
-    setCurrentIdx(next);
-    setIsPlaying(false);
-    setTimeout(() => {
-      if (audioRef.current) {
-        audioRef.current
-          .play()
-          .then(() => setIsPlaying(true))
-          .catch(() => setIsPlaying(false));
-      }
-    }, 100);
-  }
-
-  function handlePrev() {
-    if (tracks.length === 0) return;
-    const prev = (currentIdx - 1 + tracks.length) % tracks.length;
-    setCurrentIdx(prev);
-    setIsPlaying(false);
-    setTimeout(() => {
-      if (audioRef.current) {
-        audioRef.current
-          .play()
-          .then(() => setIsPlaying(true))
-          .catch(() => setIsPlaying(false));
-      }
-    }, 100);
-  }
-
-  function handleSeek(e: React.ChangeEvent<HTMLInputElement>) {
-    const time = Number(e.target.value);
-    setCurrentTime(time);
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-    }
-  }
-
-  function toggleMute() {
-    if (!audioRef.current) return;
-    audioRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
-  }
-
-  function formatTime(seconds: number) {
-    if (isNaN(seconds) || seconds <= 0) return '00:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }
-
-  if (tracks.length === 0) return null;
-
-  return (
-    <div className="relative overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/60 backdrop-blur p-4 sm:p-5 shadow-sm craft-card">
-      <audio ref={audioRef} src={currentTrack.url} preload="metadata" />
-
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Track Info with Spinning Vinyl Disc */}
-        <div className="flex items-center gap-3.5 w-full sm:w-auto">
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden ring-1 ring-zinc-300 dark:ring-zinc-700 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0 shadow-xs">
-            <Disc3
-              className={`w-7 h-7 text-indigo-500 dark:text-indigo-400 transition-transform ${
-                isPlaying ? 'animate-spin' : ''
-              }`}
-              style={{ animationDuration: '6s' }}
-            />
-          </div>
-
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-                {currentTrack.title}
-              </span>
-              {isPlaying && (
-                <div className="flex items-end gap-0.5 h-3">
-                  <span className="w-0.5 h-full bg-indigo-500 rounded-full animate-bounce"></span>
-                  <span
-                    className="w-0.5 h-full bg-indigo-500 rounded-full animate-bounce"
-                    style={{ animationDelay: '0.15s' }}
-                  ></span>
-                  <span
-                    className="w-0.5 h-full bg-indigo-500 rounded-full animate-bounce"
-                    style={{ animationDelay: '0.3s' }}
-                  ></span>
-                </div>
-              )}
-            </div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
-              {currentTrack.artist}
-            </p>
-          </div>
-        </div>
-
-        {/* Controls & Progress */}
-        <div className="flex flex-col sm:items-end w-full sm:w-64 gap-2">
-          {/* Action Buttons */}
-          <div className="flex items-center justify-center sm:justify-end gap-2.5 w-full">
-            <button
-              onClick={handlePrev}
-              type="button"
-              aria-label="上一曲"
-              className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            >
-              <SkipBack className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={togglePlay}
-              type="button"
-              aria-label={isPlaying ? '暂停' : '播放'}
-              className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:scale-105 active:scale-95 transition-all"
-            >
-              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
-            </button>
-
-            <button
-              onClick={handleNext}
-              type="button"
-              aria-label="下一曲"
-              className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            >
-              <SkipForward className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={toggleMute}
-              type="button"
-              aria-label={isMuted ? '取消静音' : '静音'}
-              className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors ml-1"
-            >
-              {isMuted ? <VolumeX className="w-4 h-4 text-rose-500" /> : <Volume2 className="w-4 h-4" />}
-            </button>
-          </div>
-
-          {/* Seekbar & Time */}
-          <div className="flex items-center gap-2 w-full text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
-            <span>{formatTime(currentTime)}</span>
-            <input
-              type="range"
-              min="0"
-              max={duration || 100}
-              value={currentTime}
-              onChange={handleSeek}
-              className="w-full h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-            />
-            <span>{formatTime(duration)}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    const close = (e: MouseEvent) => { if (widget.current && !widget.current.contains(e.target as Node)) setExpanded(false); };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setExpanded(false); };
+    document.addEventListener('click', close); document.addEventListener('keydown', key);
+    return () => { document.removeEventListener('click', close); document.removeEventListener('keydown', key); };
+  }, []);
+  if (!track) return null;
+  const clock = (value: number) => Math.floor(value / 60) + ':' + String(Math.floor(value % 60)).padStart(2, '0');
+  return <div className="music-widget" data-playing={playing} ref={widget} aria-label="音乐播放器">
+    <audio ref={audio} src={track.url} preload="none" muted={muted}
+      onPlay={() => { setPlaying(true); setLoading(false); }} onPause={() => setPlaying(false)}
+      onWaiting={() => setLoading(true)} onPlaying={() => setLoading(false)}
+      onTimeUpdate={e => setTime(e.currentTarget.currentTime)}
+      onLoadedMetadata={e => setDuration(Number.isFinite(e.currentTarget.duration) ? e.currentTarget.duration : 0)}
+      onEnded={() => choose((index + 1) % tracks.length, true)}
+      onError={() => { setError('音源暂时不可用，可以换一首。'); setPlaying(false); setLoading(false); wantsPlay.current = false; }} />
+    <div className="music-disc" aria-hidden="true"><Disc3 size={19} strokeWidth={1} /></div>
+    <div className="music-info"><strong>{track.title}</strong><small>{loading ? '缓冲中…' : error ? '音源不可用' : playing ? '正在播放 · ' + track.artist : '给阅读一点声音'}</small></div>
+    <button type="button" aria-label={playing ? '暂停音乐' : '播放音乐'} onClick={() => {
+      if (playing) { wantsPlay.current = false; audio.current?.pause(); } else { wantsPlay.current = true; void play(); }
+    }}>{playing ? <Pause size={15} /> : <Play size={15} />}</button>
+    <button type="button" className="music-secondary" aria-label="下一曲" onClick={() => choose((index + 1) % tracks.length)}><SkipForward size={14} /></button>
+    <button type="button" aria-label={expanded ? '收起歌单' : '展开歌单'} aria-expanded={expanded} aria-controls="music-details" onClick={() => setExpanded(!expanded)}>{expanded ? <ChevronDown size={13} /> : <ChevronUp size={13} />}</button>
+    {expanded && <div className="music-expanded" id="music-details">
+      <div className="meta"><span>READING RADIO</span><button type="button" aria-label={muted ? '取消静音' : '静音'} aria-pressed={muted} onClick={() => setMuted(!muted)}>{muted ? <VolumeX size={15} /> : <Volume2 size={15} />}</button></div>
+      <input type="range" min="0" max={duration || 1} step="1" value={Math.min(time,duration || 1)} aria-label="播放进度" disabled={!duration} onChange={e => { if (audio.current) { audio.current.currentTime = Number(e.target.value); setTime(Number(e.target.value)); } }} />
+      <div className="meta"><span>{clock(time)}</span><span>{clock(duration)}</span></div>
+      {error && <p className="music-error" role="status">{error}</p>}
+      <div className="music-track-list">{tracks.map((item, i) => <button key={item.url} type="button" aria-current={i === index ? 'true' : undefined} onClick={() => choose(i)}><span className={i === index ? 'accent' : ''}>{String(i + 1).padStart(2,'0')}　{item.title}</span><span className="muted">{item.artist}</span></button>)}</div>
+    </div>}
+  </div>;
 }

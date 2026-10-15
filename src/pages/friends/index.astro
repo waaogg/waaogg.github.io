@@ -1,74 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Comments from '../../components/Comments.astro';
 import { getCollection } from 'astro:content';
-import { Users, ExternalLink } from 'lucide-react';
-import WalineComments from '../../components/WalineComments';
+import { isPublished } from '../../lib/publication';
 import { siteConfig } from '../../site.config';
-
-const allFriends = await getCollection('friends');
+const friends = await getCollection('friends', ({data}) => isPublished(data));
 ---
-
-<BaseLayout title="友情链接" description="朋友们与常去逛的优质独立博客小岛。">
-  <div class="space-y-8">
-    <!-- Header with Reveal 1 -->
-    <div class="border-b border-zinc-200/80 dark:border-zinc-800/80 pb-6 reveal-1">
-      <h1 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-2.5">
-        <Users className="w-6 h-6 text-indigo-500" />
-        友情链接 · 邻居们
-      </h1>
-      <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-        互联网本应由互联的小岛组成。欢迎交换友链，互相串门。
-      </p>
-    </div>
-
-    <!-- Friends Cards Grid with Reveal 2 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4.5 reveal-2">
-      {allFriends.map((friend) => (
-        <a
-          href={friend.data.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center gap-4 p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-900/60 backdrop-blur craft-card group"
-        >
-          <img
-            src={friend.data.avatar}
-            alt={friend.data.name}
-            class="w-12 h-12 rounded-full object-cover ring-2 ring-zinc-200 dark:ring-zinc-800 shrink-0 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300"
-          />
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center justify-between gap-1">
-              <span class="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
-                {friend.data.name}
-              </span>
-              <ExternalLink className="w-3.5 h-3.5 text-zinc-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0" />
-            </div>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
-              {friend.data.description}
-            </p>
-          </div>
-        </a>
-      ))}
-    </div>
-
-    <!-- Exchange Rules Notion Callout with Reveal 3 -->
-    <div class="reveal-3 p-5 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/60 dark:bg-zinc-900/40 backdrop-blur space-y-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400 craft-card">
-      <div class="font-bold text-zinc-900 dark:text-zinc-100 text-sm flex items-center gap-2">
-        <span>🤝</span> 友链申请规范
-      </div>
-      <p>
-        如果你也拥有独立博客且持续保持内容更新，欢迎在下方评论区留言交换。留言格式参考：
-      </p>
-      <div class="p-3.5 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 font-mono text-zinc-700 dark:text-zinc-300 select-all border border-zinc-200 dark:border-zinc-700">
-        名称: {siteConfig.title}<br />
-        简介: {siteConfig.bio}<br />
-        链接: {siteConfig.site}<br />
-        头像: {siteConfig.site}{siteConfig.avatar}
-      </div>
-    </div>
-
-    <!-- Message & Comments Board -->
-    <div class="reveal-4">
-      <WalineComments client:only="react" path="/friends" />
-    </div>
-  </div>
+<BaseLayout title="朋友的小岛" description="去别人的世界坐坐。">
+  <header class="page-head reveal"><p class="eyebrow">NEIGHBOURS ON THE INTERNET</p><h1>朋友的小岛<span class="accent">。</span></h1><p>互联网很大，能偶尔串门的小角落很珍贵。这些是值得停下来读一读的地方。</p></header>
+  <div class="friend-grid">{friends.map(friend => <a class="friend-card" href={friend.data.url} target="_blank" rel="noopener noreferrer">{friend.data.avatar ? <img src={friend.data.avatar} alt="" width="42" height="42" loading="lazy" data-avatar-fallback={friend.data.name.slice(0,1)} /> : <span class="friend-avatar">{friend.data.name.slice(0,1)}</span>}<div><strong>{friend.data.name} ↗</strong><p>{friend.data.description}</p><span class="meta">{friend.data.tag}</span></div></a>)}</div>
+  <section class="callout narrow" style="margin-top:50px"><h2>交换一扇窗</h2><p>如果你也在认真记录生活，欢迎留下你的网站。请附上名称、网址、简介和头像地址，收录前会先去你的小站看看。</p><p class="meta" style="margin-top:18px">本站信息</p><p>{siteConfig.title}<br />{siteConfig.description}<br /><a class="accent" href={siteConfig.site}>{siteConfig.site}</a></p></section>
+  <div class="narrow"><Comments path="/friends" title="留下你的地址" /></div>
 </BaseLayout>

@@ -1,4 +1,7 @@
 ---
+schemaVersion: 1
+contentId: "memos-hello-world"
+publication: published
 date: 2026-10-15
 mood: "🌱"
 tags: ["启程", "日常"]

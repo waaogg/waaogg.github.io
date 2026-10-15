@@ -1,24 +1,7 @@
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
-import type { APIContext } from 'astro';
+import { publishedPosts, postPath } from '../lib/content';
 import { siteConfig } from '../site.config';
-
-export async function GET(context: APIContext) {
-  const posts = await getCollection('posts');
-  const validPosts = posts
-    .filter((post) => !post.data.isDraft)
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-  return rss({
-    title: siteConfig.title,
-    description: siteConfig.description,
-    site: context.site || siteConfig.site,
-    items: validPosts.map((post) => ({
-      title: post.data.title,
-      pubDate: post.data.pubDate,
-      description: post.data.description,
-      link: `/posts/${post.id}/`,
-    })),
-    customData: `<language>zh-CN</language>`,
-  });
+export async function GET() {
+  return rss({ title:siteConfig.title, description:siteConfig.description, site:siteConfig.site,
+    items:(await publishedPosts()).map(post=>({title:post.data.title,pubDate:post.data.pubDate,description:post.data.description,link:postPath(post)})), customData:'<language>zh-CN</language>' });
 }

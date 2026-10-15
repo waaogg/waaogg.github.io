@@ -1,0 +1,18 @@
+---
+import { siteConfig } from '../site.config';
+const quote = siteConfig.quotes[0];
+---
+{siteConfig.features.quotes && quote && <div class="quote-strip"><div><span data-quote-text>{quote.text}</span><small data-quote-source>— {quote.source}</small></div><button type="button" class="icon-button" aria-label="换一句话" data-quote-refresh>↻</button></div>}
+<script>
+  import { siteConfig } from '../site.config';
+  document.addEventListener('click', event => {
+    if (!(event.target as Element).closest('[data-quote-refresh]')) return;
+    const text = document.querySelector('[data-quote-text]');
+    const next = siteConfig.quotes.find(q => q.text !== text?.textContent);
+    if (!next || !text) return;
+    const remaining = siteConfig.quotes.filter(q => q.text !== text.textContent);
+    const quote = remaining[Math.floor(Math.random() * remaining.length)];
+    text.textContent = quote.text;
+    const source = document.querySelector('[data-quote-source]'); if (source) source.textContent = '— ' + quote.source;
+  });
+</script>

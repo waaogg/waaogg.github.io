@@ -1,188 +1,45 @@
 ---
+import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, render } from 'astro:content';
-import WalineComments from '../../components/WalineComments';
 import TableOfContents from '../../components/TableOfContents.astro';
-import FontSwitcher from '../../components/FontSwitcher';
-import { ArrowLeft, Calendar, Tag, Clock, AlignLeft, ShieldCheck } from 'lucide-react';
+import ReadingControls from '../../components/ReadingControls.astro';
+import Comments from '../../components/Comments.astro';
+import { publishedPosts, postPath, formatDate, growthLabels, readingStats } from '../../lib/content';
 import { siteConfig } from '../../site.config';
-
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  return (await publishedPosts()).map(post => ({ params: { slug: post.data.slug || post.id }, props: { post } }));
 }
-
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
-
-// Calculate Word Count and Reading Time
-const rawText = post.body || '';
-const chineseChars = (rawText.match(/[\u4e00-\u9fa5]/g) || []).length;
-const englishWords = (rawText.match(/[a-zA-Z0-9_\-]+/g) || []).length;
-const totalWords = chineseChars + englishWords;
-const readingMinutes = Math.max(1, Math.ceil(totalWords / 350));
-
-const growthMap = {
-  seedling: { label: '灵感幼苗', emoji: '🌱', tip: '思考探索初期，内容将持续补充演进' },
-  budding: { label: '思考育成', emoji: '🌿', tip: '结构已初具雏形，正在深化验证案例' },
-  evergreen: { label: '思想常青', emoji: '🌲', tip: '反复打磨沉淀，观点与论述成熟稳定' },
-};
-
-const growth = growthMap[post.data.growth || 'evergreen'] || growthMap.evergreen;
-const articleUrl = `${siteConfig.site}/posts/${post.id}`;
+const posts = await publishedPosts();
+const index = posts.findIndex(item => item.id === post.id);
+const older = posts[index + 1], newer = posts[index - 1];
+const related = posts.filter(item => item.id !== post.id && item.data.tags.some(tag => post.data.tags.includes(tag))).slice(0,3);
+const stats = readingStats(post.body || '');
+const url = new URL(postPath(post), siteConfig.site).href;
 ---
-
-<BaseLayout title={post.data.title} description={post.data.description}>
-  <article class="space-y-8">
-    <!-- Back Navigation with Reveal 1 -->
-    <div class="reveal-1 flex items-center justify-between">
-      <a
-        href="/posts"
-        class="group inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-      >
-        <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
-        返回文章列表
-      </a>
-
-      <!-- Font Switcher (Sans / Serif) -->
-      <FontSwitcher client:load />
+<BaseLayout title={post.data.title} description={post.data.description} image={post.data.heroImage} article>
+  <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+  <header class="article-head reveal"><a class="text-link muted" href="/posts/">← 返回手记</a><div class="meta" style="margin-top:25px"><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><span>·</span><span>{stats.words} 字 / 约 {stats.minutes} 分钟</span><span class="growth">{growthLabels[post.data.growth]}</span></div>
+    <h1 data-pagefind-meta="title" transition:name={'post-title-' + post.data.contentId}>{post.data.title}</h1>
+    <div class="tag-row">{post.data.tags.map(tag => <a class="tag" href={'/tags/' + encodeURIComponent(tag) + '/'}>#{tag}</a>)}</div>
+    <p class="article-deck">{post.data.description}</p>
+    {post.data.updatedDate && <p class="meta">更新于 {formatDate(post.data.updatedDate)}</p>}
+  </header>
+  <div class="article-layout">
+    <div class="article-main">
+      <TableOfContents headings={headings} mobile />
+      {post.data.heroImage && <img src={post.data.heroImage} alt={post.data.heroAlt || post.data.title} width="1200" height="675" style="border-radius:6px;margin-bottom:30px" />}
+      <article class="article-body" id="article-content" data-pagefind-body>
+        <span hidden data-pagefind-ignore data-pagefind-meta="type">文章</span><span hidden data-pagefind-ignore data-pagefind-filter="type">文章</span>
+        <Content />
+      </article>
+      <div class="article-footer"><p>写下这些文字的：{siteConfig.author}</p><p>内容采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>。转载时请注明作者与原文链接。</p><a href={url}>{url}</a></div>
+      <nav class="post-neighbors" aria-label="相邻文章">{older ? <a href={postPath(older)}><small>← 更早的文字</small><span>{older.data.title}</span></a> : <span></span>}{newer ? <a href={postPath(newer)}><small>更新的文字 →</small><span>{newer.data.title}</span></a> : <span></span>}</nav>
+      {related.length > 0 && <section class="section" data-pagefind-ignore><p class="eyebrow">也许还想读</p>{related.map(item => <a class="mini-project" href={postPath(item)}><strong>{item.data.title} ↗</strong></a>)}</section>}
+      <Comments path={postPath(post).replace(/\/$/, '')} />
     </div>
-
-    <!-- Article Header -->
-    <header class="space-y-4 pb-6 border-b border-zinc-200/80 dark:border-zinc-800/80 reveal-1">
-      <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-        {post.data.title}
-      </h1>
-
-      <div class="flex flex-wrap items-center gap-3.5 text-xs font-mono text-zinc-500 dark:text-zinc-400">
-        <time class="flex items-center gap-1.5">
-          <Calendar className="w-3.5 h-3.5" />
-          {post.data.pubDate.toISOString().slice(0, 10)}
-        </time>
-        <span>·</span>
-        <span class="flex items-center gap-1">
-          <AlignLeft className="w-3.5 h-3.5" />
-          {totalWords} 字
-        </span>
-        <span>·</span>
-        <span class="flex items-center gap-1">
-          <Clock className="w-3.5 h-3.5" />
-          约 {readingMinutes} 分钟
-        </span>
-        <span>·</span>
-        <!-- Digital Garden Growth Badge -->
-        <span
-          title={growth.tip}
-          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-sans font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/60 dark:border-zinc-700/60 cursor-help"
-        >
-          <span>{growth.emoji}</span>
-          <span>{growth.label}</span>
-        </span>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-1.5 pt-1">
-        {post.data.tags.map((tag) => (
-          <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-[11px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
-            <Tag className="w-2.5 h-2.5" />
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      {post.data.description && (
-        <p class="text-sm italic text-zinc-600 dark:text-zinc-400 border-l-2 border-indigo-400 dark:border-indigo-600 pl-3.5 py-1.5 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-r-lg leading-relaxed">
-          {post.data.description}
-        </p>
-      )}
-    </header>
-
-    <!-- Table of Contents Component (Reveal 2) -->
-    {headings.length > 1 && (
-      <div class="reveal-2">
-        <TableOfContents headings={headings} />
-      </div>
-    )}
-
-    <!-- Notion-style Prose Content with Reveal 3 -->
-    <div
-      id="article-content"
-      class="reveal-3 prose prose-zinc dark:prose-invert max-w-none transition-all prose-headings:font-bold prose-headings:tracking-tight prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-a:underline hover:prose-a:opacity-80 prose-code:font-mono prose-pre:rounded-xl prose-pre:border prose-pre:border-zinc-200 dark:prose-pre:border-zinc-800"
-    >
-      <Content />
-    </div>
-
-    <!-- Creative Commons License Card (Reveal 4) -->
-    <section class="reveal-4 p-4.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 backdrop-blur craft-card space-y-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-      <div class="flex items-center justify-between gap-2 font-bold text-zinc-900 dark:text-zinc-100 text-sm pb-1.5 border-b border-zinc-200/60 dark:border-zinc-800/60">
-        <div class="flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-indigo-500" />
-          <span>知识共享许可协议 · CC BY-NC-SA 4.0</span>
-        </div>
-        <span class="text-[10px] font-mono font-normal text-zinc-400">署名 · 非商用 · 相同方式共享</span>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
-        <div>
-          <span class="text-zinc-400">本文作者：</span>
-          <span class="text-zinc-800 dark:text-zinc-200 font-sans font-medium">{siteConfig.author}</span>
-        </div>
-        <div class="truncate">
-          <span class="text-zinc-400">文章链接：</span>
-          <a href={articleUrl} class="text-indigo-600 dark:text-indigo-400 hover:underline">{articleUrl}</a>
-        </div>
-      </div>
-      <p class="pt-1 text-[11px] text-zinc-400 dark:text-zinc-500">
-        如需转载请保持原文链接完整并标明作者。商业性使用请事先与博主取得联络授权。
-      </p>
-    </section>
-
-    <!-- Waline Comments Section with Reveal 5 -->
-    <div class="reveal-5">
-      <WalineComments client:only="react" path={`/posts/${post.id}`} />
-    </div>
-  </article>
+    <aside class="toc-aside"><TableOfContents headings={headings} /><ReadingControls /><p class="muted" style="font-size:10px;margin-top:18px">让文字以你喜欢的方式出现。</p><a class="text-link muted" style="font-size:10px;margin-top:15px" href="#comments">跳到评论 ↓</a></aside>
+  </div>
+  <div class="mobile-reading-settings"><ReadingControls /></div>
 </BaseLayout>
-
-<script>
-  function setupCodeBlockCopy() {
-    const codeBlocks = document.querySelectorAll('pre');
-    codeBlocks.forEach((pre) => {
-      // Avoid duplicate copy buttons
-      if (pre.querySelector('.code-copy-btn')) return;
-
-      pre.style.position = 'relative';
-
-      const copyBtn = document.createElement('button');
-      copyBtn.className =
-        'code-copy-btn absolute top-2.5 right-2.5 px-2 py-1 rounded-md text-[10px] font-mono bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/80 transition-all cursor-pointer opacity-0 group-hover:opacity-100 hover:scale-105 active:scale-95 shadow-sm';
-      copyBtn.textContent = '复制';
-      copyBtn.setAttribute('aria-label', '复制代码');
-
-      pre.classList.add('group');
-      pre.appendChild(copyBtn);
-
-      copyBtn.addEventListener('click', async () => {
-        const code = pre.querySelector('code');
-        const text = code ? code.innerText : pre.innerText;
-
-        try {
-          await navigator.clipboard.writeText(text);
-          copyBtn.textContent = '已复制 ✓';
-          copyBtn.classList.add('text-emerald-400', 'border-emerald-500/60');
-          setTimeout(() => {
-            copyBtn.textContent = '复制';
-            copyBtn.classList.remove('text-emerald-400', 'border-emerald-500/60');
-          }, 2000);
-        } catch (err) {
-          copyBtn.textContent = '失败';
-          setTimeout(() => (copyBtn.textContent = '复制'), 2000);
-        }
-      });
-    });
-  }
-
-  setupCodeBlockCopy();
-  document.addEventListener('astro:page-load', setupCodeBlockCopy);
-</script>

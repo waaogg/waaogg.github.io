@@ -1,0 +1,13 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { postPath, formatDate, growthLabels, readingStats } from '../lib/content';
+interface Props { post: CollectionEntry<'posts'>; }
+const { post } = Astro.props;
+const stats = readingStats(post.body || '');
+---
+<a class="post-row" href={postPath(post)}>
+  <div class="meta"><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time><span>·</span><span>{stats.minutes} 分钟阅读</span><span class="growth">{growthLabels[post.data.growth]}</span></div>
+  <h3 transition:name={'post-title-' + post.data.contentId}>{post.data.title}</h3>
+  <p>{post.data.description}</p>
+  <div class="tag-row">{post.data.tags.slice(0,3).map(tag => <span class="tag">#{tag}</span>)}</div>
+</a>

@@ -11,7 +11,14 @@
     "build": "astro build && pagefind --site dist",
     "check": "astro check",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "content": "node --experimental-strip-types scripts/content.mjs",
+    "contract": "node --experimental-strip-types scripts/generate-contract.mjs",
+    "prebuild": "npm run content -- validate && npm run contract",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "verify": "node scripts/verify-build.mjs",
+    "test:publication": "node scripts/test-publication.mjs",
+    "cloud:check": "node scripts/check-cloud-env.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.1",
@@ -27,11 +34,12 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "tailwind-merge": "^3.7.0",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@tailwindcss/typography": "^0.5.20",
+    "@types/node": "^22.20.5",
     "typescript": "^6.0.3"
   }
 }

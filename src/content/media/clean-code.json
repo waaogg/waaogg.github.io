@@ -1,4 +1,7 @@
 {
+  "schemaVersion": 1,
+  "contentId": "media-clean-code",
+  "publication": "published",
   "title": "代码整洁之道 (Clean Code)",
   "type": "book",
   "rating": 5,

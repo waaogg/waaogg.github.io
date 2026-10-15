@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostRow from '../../components/PostRow.astro';
+import { publishedPosts } from '../../lib/content';
+export async function getStaticPaths() {
+  const posts = await publishedPosts();
+  return [...new Set(posts.flatMap(post => post.data.tags))].map(tag => ({ params:{tag}, props:{tag, posts:posts.filter(post => post.data.tags.includes(tag))} }));
+}
+const { tag, posts } = Astro.props;
+---
+<BaseLayout title={'主题：' + tag}><div class="narrow"><header class="page-head"><a class="text-link muted" href="/posts/">← 全部手记</a><h1>#{tag}<span class="accent">。</span></h1><p>关于这个主题的 {posts.length} 篇文字。</p></header>{posts.map(post => <PostRow post={post} />)}</div></BaseLayout>

@@ -1,4 +1,7 @@
 {
+  "schemaVersion": 1,
+  "contentId": "friends-astro",
+  "publication": "published",
   "name": "Astro Official",
   "description": "The web framework for content-driven websites.",
   "avatar": "https://astro.build/favicon.svg",

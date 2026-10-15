@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { publishedPosts, postPath } from '../lib/content';
+const urls = (await publishedPosts()).map(postPath);
+---
+<BaseLayout title="这一页暂时不在" noindex><div class="narrow" style="padding:100px 0"><p class="eyebrow">A SMALL DETOUR / 404</p><h1 class="serif" style="font-size:48px;margin:25px 0">好像，走岔了一页。</h1><p class="muted">可能是地址变了，也可能是故事还没写到这里。沿着下面的入口，再逛一会儿吧。</p><div class="hero-actions" style="flex-wrap:wrap"><a class="button" href="/">回到首页 ↗</a><button class="button secondary" type="button" data-search-open>找找内容</button>{urls.length>0 && <button type="button" class="text-link" style="border:0" data-random-urls={JSON.stringify(urls)}>随便读一篇 ↗</button>}</div></div></BaseLayout>
+<script>
+  import { navigate } from 'astro:transitions/client';
+  document.addEventListener('click',event=>{const button=(event.target as Element).closest<HTMLElement>('[data-random-urls]');if(!button)return;const urls=JSON.parse(button.dataset.randomUrls || '[]') as string[];if(urls.length)void navigate(urls[Math.floor(Math.random()*urls.length)]);});
+</script>

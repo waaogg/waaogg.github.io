@@ -3,4 +3,12 @@ dist
 .astro
 .git
 .github
+.env
+.env.*
+!.env.example
+waline-data
+artifacts
+PROGRESS.md
+MEMORIES.md
+BLOCKED.md
 *.log

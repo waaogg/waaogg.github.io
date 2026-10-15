@@ -30,3 +30,7 @@ BLOCKED.md
 MEMORIES.md
 PROGRESS.md
 waline-data/
+*.lock
+!package-lock.json
+*.tmp-*
+artifacts/

@@ -1,4 +1,7 @@
 ---
+schemaVersion: 1
+contentId: "memos-thoughts-on-design"
+publication: published
 date: 2026-10-14
 mood: "✨"
 tags: ["灵感", "设计"]

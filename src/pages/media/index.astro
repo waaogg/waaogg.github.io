@@ -1,85 +1,31 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import BookCover from '../../components/BookCover.astro';
 import { getCollection } from 'astro:content';
-import { Film, Book, Gamepad2, Music, Star, Calendar } from 'lucide-react';
-
-const allMedia = await getCollection('media');
-const mediaList = allMedia.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-const typeLabels = {
-  book: { label: '书籍', icon: Book },
-  movie: { label: '电影', icon: Film },
-  game: { label: '游戏', icon: Gamepad2 },
-  music: { label: '音乐', icon: Music },
-};
-
-const statusLabels = {
-  completed: '已完成',
-  'in-progress': '进行中',
-  wishlist: '计划中',
-};
+import { isPublished, formatDate } from '../../lib/publication';
+const items = (await getCollection('media', ({data}) => isPublished(data))).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf());
+const types = {book:'书籍',movie:'电影',game:'游戏',music:'音乐'};
+const status = {completed:'已完成','in-progress':'进行中',wishlist:'想体验'};
 ---
-
-<BaseLayout title="书影音记录" description="阅读、观影、游戏与音乐个人评分及短评。">
-  <div class="space-y-8">
-    <!-- Header with Reveal 1 -->
-    <div class="border-b border-zinc-200/80 dark:border-zinc-800/80 pb-6 reveal-1">
-      <h1 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-2.5">
-        <Film className="w-6 h-6 text-indigo-500" />
-        书影音足迹
-      </h1>
-      <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-        精神食粮与文化体验记录。评分仅代表当下个人主观心境。
-      </p>
-    </div>
-
-    <!-- Media Cards Grid with Reveal 2 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4.5 reveal-2">
-      {mediaList.map((item) => {
-        const IconComponent = typeLabels[item.data.type].icon;
-        return (
-          <div class="flex flex-col justify-between p-5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-900/60 backdrop-blur craft-card space-y-3 group">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-2">
-                <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/60 dark:border-zinc-700/60">
-                  <IconComponent className="w-3 h-3 text-indigo-500" />
-                  {typeLabels[item.data.type].label}
-                </span>
-                <span class="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">
-                  {statusLabels[item.data.status]}
-                </span>
-              </div>
-
-              <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                {item.data.title}
-              </h2>
-
-              <!-- Star Rating with Hover Scale -->
-              <div class="flex items-center gap-1 my-2.5 text-amber-500">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    className={`w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-110 ${
-                      i < item.data.rating ? 'fill-current' : 'text-zinc-300 dark:text-zinc-700'
-                    }`}
-                  />
-                ))}
-                <span class="text-xs font-mono text-zinc-500 ml-1.5 font-semibold">
-                  {item.data.rating}.0
-                </span>
-              </div>
-
-              <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed italic border-l-2 border-indigo-200 dark:border-indigo-900/60 pl-3 my-2">
-                “{item.data.review}”
-              </p>
-            </div>
-
-            <div class="pt-2 text-[11px] font-mono text-zinc-400 dark:text-zinc-500 flex items-center justify-end gap-1.5">
-              <Calendar className="w-3 h-3" />
-              {item.data.date.toISOString().slice(0, 10)}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  </div>
+<BaseLayout title="精神食粮" description="书、电影、游戏与音乐留下的私人注脚。">
+  <header class="page-head reveal"><p class="eyebrow">A SHELF OF INSPIRATION</p><h1>精神食粮<span class="accent">。</span></h1><p>在别人的故事里，遇见一点自己。留下一些主观的感受，给未来重逢时的自己。</p></header>
+  <div class="filter-bar" id="media-filters" aria-label="筛选书影音" inert aria-busy="true"><div role="group" aria-label="内容类型" style="display:flex;gap:7px;flex-wrap:wrap"><button class="filter-button" type="button" data-media-type="" aria-pressed="true">全部</button>{Object.entries(types).map(([key,label]) => <button class="filter-button" type="button" data-media-type={key} aria-pressed="false">{label}</button>)}</div><label for="media-status" class="sr-only">体验状态</label><select class="filter-select" id="media-status"><option value="">所有状态</option>{Object.entries(status).map(([key,label]) => <option value={key}>{label}</option>)}</select></div>
+  <div class="media-grid" data-pagefind-body><span hidden data-pagefind-ignore data-pagefind-meta="type">书影音</span>{items.map(item => <article class="media-card" id={item.id} data-media-entry data-type={item.data.type} data-status={item.data.status}><BookCover title={item.data.title} type={item.data.type} cover={item.data.cover} /><div><div class="meta">{types[item.data.type]} / {status[item.data.status]}</div><h2>{item.data.title}</h2>{item.data.creator && <small class="muted">{item.data.creator}</small>}{item.data.rating != null && <div class="stars" aria-label={'评分 ' + item.data.rating + '，满分 5'}>{'★'.repeat(Math.round(item.data.rating))}{'☆'.repeat(5-Math.round(item.data.rating))} <span class="muted">{item.data.rating.toFixed(1)}</span></div>}<p>{item.data.review || '先放进书架，留待下一次相遇。'}</p><time class="meta" datetime={item.data.date.toISOString()}>{formatDate(item.data.date)}</time>{item.data.url && <a class="text-link accent" href={item.data.url} target="_blank" rel="noopener noreferrer">了解更多 ↗</a>}</div></article>)}</div>
+  <p class="empty-state" id="media-empty" hidden>这一格书架还是空的。</p><p class="meta" id="media-count" aria-live="polite" style="margin-top:25px"></p>
 </BaseLayout>
+<script>
+  function initMediaFilters() {
+    const filters = document.getElementById('media-filters'); if (!filters) return;
+    const params = new URLSearchParams(location.search); let type = params.get('type') || '';
+    const status = document.querySelector<HTMLSelectElement>('#media-status')!; status.value = params.get('status') || '';
+    const update = (write=true) => {
+      let count = 0; document.querySelectorAll<HTMLElement>('[data-media-entry]').forEach(row => { const visible = (!type || row.dataset.type === type) && (!status.value || row.dataset.status === status.value); row.hidden = !visible; if (visible) count++; });
+      filters.querySelectorAll<HTMLElement>('[data-media-type]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.mediaType === type)));
+      document.getElementById('media-empty')!.hidden = count > 0; document.getElementById('media-count')!.textContent = '这格书架上有 ' + count + ' 次相遇';
+      if (write) { const query = new URLSearchParams(); if(type)query.set('type',type); if(status.value)query.set('status',status.value); history.replaceState(history.state,'',location.pathname+(query.size?'?'+query:'')+location.hash); }
+    };
+    filters.querySelectorAll<HTMLButtonElement>('[data-media-type]').forEach(button => button.onclick = () => {type=button.dataset.mediaType || '';update();}); status.onchange=()=>update();update(false);
+    filters.removeAttribute('inert');filters.setAttribute('aria-busy','false');
+  }
+  initMediaFilters();document.addEventListener('astro:page-load',initMediaFilters);
+</script>

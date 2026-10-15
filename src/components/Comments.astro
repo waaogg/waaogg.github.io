@@ -1,0 +1,11 @@
+---
+import WalineComments from './WalineComments';
+import { siteConfig } from '../site.config';
+interface Props { path: string; title?: string; }
+const { path, title = '聊聊这篇内容' } = Astro.props;
+const configured = !!siteConfig.waline.serverURL && !siteConfig.waline.serverURL.includes('example.com');
+---
+<section class="comment-section" id="comments" data-pagefind-ignore>
+  <h2>{title}</h2>
+  {configured ? <WalineComments client:only="react" path={path} /> : <div class="comment-unavailable"><p>留言区还在准备中。谢谢你愿意在这里停留。</p>{siteConfig.social.email && <p style="margin-top:10px">也可以先<a href={'mailto:' + siteConfig.social.email}>写一封邮件</a>。</p>}</div>}
+</section>

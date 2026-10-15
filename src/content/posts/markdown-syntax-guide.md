@@ -1,4 +1,7 @@
 ---
+schemaVersion: 1
+contentId: "posts-markdown-syntax-guide"
+publication: published
 title: "Markdown 语法与样式渲染参考指南"
 description: "全面测试与展示本博客模板支持的 Markdown 语法元素：代码高亮、表格、引用块、列表与行内样式。"
 pubDate: 2026-10-14
@@ -8,7 +11,7 @@ growth: "seedling"
 isDraft: false
 ---
 
-# Markdown 语法渲染示例
+## Markdown 语法渲染示例
 
 本篇用于展示与验证文章排版规范与样式渲染表现。
 
@@ -37,7 +40,7 @@ isDraft: false
 
 支持主流编程语言的语法高亮：
 
-```typescript
+```typescript {2-4}
 interface UserProfile {
   name: string;
   role: 'developer' | 'designer' | 'creator';
@@ -63,7 +66,7 @@ npm run dev
 
 | 模块名称 | 技术栈 | 职责定位 |
 | :--- | :--- | :--- |
-| **基础骨架** | Astro 5 + React 19 | 静态页面生成与客户端动态交互 |
+| **基础骨架** | Astro 7 + React 19 | 静态页面生成与客户端动态交互 |
 | **样式系统** | Tailwind CSS v4 | 极简 Notion 视觉与亮暗色响应 |
 | **搜索检索** | Pagefind (静态索引) | 本地离线毫秒级全文匹配 |
 | **互动系统** | Waline | 评论留言与互动社区 |
@@ -74,7 +77,7 @@ npm run dev
 
 > 极简不是缺乏，而是克制与纯粹。去掉一切无用的修饰，让文字与思想本身成为主角。
 > 
-> —— 《写给大家的设计书》
+> —— 排版示例
 
 ---
 

@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { isPublished } from '../../lib/publication';
+export async function getStaticPaths() { return (await getCollection('projects',({data}) => isPublished(data))).map(project => ({params:{id:project.id},props:{project}})); }
+const { project } = Astro.props;
+---
+<BaseLayout title={project.data.title} description={project.data.description}><div class="narrow">
+  <header class="page-head"><a class="text-link muted" href="/projects/">← 回到作品</a><p class="eyebrow" style="margin-top:30px">PROJECT NOTES</p><h1 data-pagefind-meta="title">{project.data.title}</h1></header>
+  <article class="article-body" data-pagefind-body><span hidden data-pagefind-ignore data-pagefind-meta="type">作品</span><span hidden data-pagefind-ignore data-pagefind-filter="type">作品</span><p>{project.data.description}</p>{project.data.cover && <img src={project.data.cover} alt={project.data.title} width="1000" height="600" />}<h2>用到的技术</h2><div class="tag-row">{project.data.tech.map(tech => <span class="tag">{tech}</span>)}</div></article>
+  <div class="hero-actions">{project.data.demoUrl && !project.data.demoUrl.includes('example.com') && <a class="button" href={project.data.demoUrl} target="_blank" rel="noopener noreferrer">在线体验 ↗</a>}{project.data.githubUrl && project.data.githubUrl !== 'https://github.com' && <a class="button secondary" href={project.data.githubUrl} target="_blank" rel="noopener noreferrer">查看源代码 ↗</a>}</div>
+</div></BaseLayout>

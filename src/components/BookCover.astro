@@ -1,0 +1,6 @@
+---
+interface Props { title: string; type: string; cover?: string; }
+const { title, type, cover } = Astro.props;
+const titles: Record<string,string> = { book: 'READING NOTES', movie: 'CINEMA JOURNAL', game: 'PLAY & EXPLORE', music: 'SOUND DIARY' };
+---
+{cover ? <img src={cover} alt={title + '封面'} width="150" height="200" loading="lazy" style="aspect-ratio:3/4;object-fit:cover;border-radius:3px" /> : <div class="book-cover" data-type={type} aria-hidden="true"><small>{titles[type]}</small><strong>{title.split('(')[0].trim()}</strong><small>personal collection</small></div>}
