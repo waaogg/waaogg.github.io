@@ -26,7 +26,7 @@ test:publication 实际注入草稿、归档、旧 isDraft 和未来日期样本
 
 ## GitHub Pages
 
-.github/workflows/pages.yml 在 main 更新后检查并构建，再使用官方 Pages artifact 发布。Pages 设置使用 GitHub Actions。PR 只验证，不部署。
+当前使用 gh-pages 分支发布。已准备 deploy/github/pages.workflow.yml 自动检查与发布模板；当前 GitHub 凭据没有 workflow 权限，不能直接添加 Actions 工作流。取得该权限后，将模板复制到 .github/workflows/pages.yml，并将 Pages 设置切换为 GitHub Actions。该工作流在 main 更新后检查、构建与发布，PR 只验证。
 
 npm run deploy 是保留的 gh-pages 分支发布备用入口；它构建后推送产物，不 force push。
 

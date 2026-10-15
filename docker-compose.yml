@@ -23,7 +23,7 @@ services:
     network_mode: none
     entrypoint: [/bin/sh, -ec]
     command:
-      - 'if [ ! -s /app/data/waline.sqlite ]; then cp /seed/waline.sqlite /app/data/waline.sqlite; fi'
+      - 'if [ -d /app/data/waline.sqlite ]; then echo "waline.sqlite must be a file; inspect existing storage before continuing" >&2; exit 1; fi; if [ ! -s /app/data/waline.sqlite ]; then cp /seed/waline.sqlite /app/data/waline.sqlite; fi'
     volumes:
       - ./deploy/waline/waline.sqlite:/seed/waline.sqlite:ro
       - waline-data:/app/data
