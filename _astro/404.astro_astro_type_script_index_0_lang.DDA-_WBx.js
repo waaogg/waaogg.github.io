@@ -1,0 +1,1 @@
+import{t as e}from"./client.Cy7fLNQY.js";document.addEventListener(`click`,t=>{let n=t.target.closest(`[data-random-urls]`);if(!n)return;let r=JSON.parse(n.dataset.randomUrls||`[]`);r.length&&e(r[Math.floor(Math.random()*r.length)])});
