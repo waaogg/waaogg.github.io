@@ -93,10 +93,12 @@
 .lightbox [data-image-error] { text-align:center; padding:60px 20px; font-size:13px; }
 .explore-panel { max-height:75dvh; overflow:auto; }
 .mobile-menu nav { max-height:65dvh; overflow:auto; }
+.site-footer { padding-bottom:100px; }
 @media (min-width:1051px) { .hero { grid-template-columns:minmax(0,1fr) 350px; } }
 @media (min-width:641px) and (max-width:900px) { .hero { grid-template-columns:minmax(0,1fr) 290px; gap:30px; }.moment-card { padding:20px; }.moment-stack {min-height:420px;} }
 @media (max-width:1000px) { .gallery-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; } }
 @media (max-width:640px) {
+  .site-footer { padding-bottom:35px; }
   .moment-deck { width:calc(100% - 28px); max-width:350px; }
   .moment-stack { min-height:445px; }
   .moment-card { padding:22px; }
