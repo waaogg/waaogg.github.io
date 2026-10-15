@@ -1,7 +1,7 @@
 /* A small stack of paper, photographs and things worth keeping. */
 .moment-deck { position:relative; width:100%; max-width:350px; min-width:0; outline-offset:15px; }
-.moment-stack { position:relative; height:440px; touch-action:pan-y; user-select:none; }
-.moment-card { position:absolute; inset:0; display:flex; flex-direction:column; padding:24px; transform-origin:50% 80%; transition:transform .3s ease,opacity .2s; }
+.moment-stack { position:relative; display:grid; min-height:440px; touch-action:pan-y; user-select:none; }
+.moment-card { position:relative; grid-area:1/1; min-width:0; display:flex; flex-direction:column; padding:24px; transform-origin:50% 80%; transition:transform .3s ease,opacity .2s; }
 .moment-card[data-position="front"] { z-index:3; transform:translateX(var(--drag,0px)) rotate(var(--tilt,2deg)); }
 .moment-card[data-position="behind-one"] { z-index:2; transform:translate(10px,-3px) rotate(6deg); pointer-events:none; }
 .moment-card[data-position="behind-two"] { z-index:1; transform:translate(-8px,0) rotate(-3deg); pointer-events:none; }
@@ -16,8 +16,8 @@
 .moment-image { position:relative; display:block; width:100%; margin:18px 0 12px; padding:0; border:0; background:var(--surface-alt); aspect-ratio:4/3; overflow:hidden; border-radius:2px; cursor:zoom-in; flex-shrink:0; }
 .moment-image img { display:block; width:100%; height:100%; pointer-events:none; -webkit-user-drag:none; }
 .moment-copy { padding:0 0 14px; text-align:center; }
-.moment-copy .moment-title { font:19px/1.7 var(--serif); color:var(--ink); margin:0; }
-.moment-copy p:not(.moment-title) { font-size:11px; line-height:1.8; color:var(--muted); margin:8px 0 0; }
+.moment-copy .moment-title { font:19px/1.7 var(--serif); color:var(--ink); margin:0; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
+.moment-copy p:not(.moment-title) { font-size:11px; line-height:1.8; color:var(--muted); margin:8px 0 0; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
 .moment-card[data-position="front"] .image-hint { opacity:0; }
 .moment-card[data-position="front"] .moment-image:is(:hover,:focus-visible) .image-hint { opacity:1; }
 .moment-related { display:block; font-size:10px; margin-top:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -94,11 +94,11 @@
 .explore-panel { max-height:75dvh; overflow:auto; }
 .mobile-menu nav { max-height:65dvh; overflow:auto; }
 @media (min-width:1051px) { .hero { grid-template-columns:minmax(0,1fr) 350px; } }
-@media (min-width:641px) and (max-width:900px) { .hero { grid-template-columns:minmax(0,1fr) 290px; gap:30px; }.moment-card { padding:20px; }.moment-stack {height:420px;} }
+@media (min-width:641px) and (max-width:900px) { .hero { grid-template-columns:minmax(0,1fr) 290px; gap:30px; }.moment-card { padding:20px; }.moment-stack {min-height:420px;} }
 @media (max-width:1000px) { .gallery-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; } }
 @media (max-width:640px) {
   .moment-deck { width:calc(100% - 28px); max-width:350px; }
-  .moment-stack { height:445px; }
+  .moment-stack { min-height:445px; }
   .moment-card { padding:22px; }
   .moment-card .journal-art { height:190px; }
   .moment-card .moment-title { font-size:20px; }
