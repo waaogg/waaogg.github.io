@@ -27,6 +27,27 @@
             "archived"
           ]
         },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
+        },
         "title": {
           "type": "string",
           "minLength": 1
@@ -59,6 +80,10 @@
         },
         "heroAlt": {
           "type": "string"
+        },
+        "heroAsset": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
         },
         "growth": {
           "default": "seedling",
@@ -107,6 +132,27 @@
             "archived"
           ]
         },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
+        },
         "date": {
           "type": "string",
           "format": "date-time"
@@ -126,23 +172,45 @@
           "default": [],
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "src": {
-                "type": "string",
-                "minLength": 1
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "assetId": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                  },
+                  "alt": {
+                    "type": "string"
+                  },
+                  "caption": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "assetId"
+                ]
               },
-              "alt": {
-                "type": "string",
-                "minLength": 1
-              },
-              "caption": {
-                "type": "string"
+              {
+                "type": "object",
+                "properties": {
+                  "src": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "alt": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "caption": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "src",
+                  "alt"
+                ]
               }
-            },
-            "required": [
-              "src",
-              "alt"
             ]
           }
         }
@@ -173,6 +241,27 @@
             "published",
             "archived"
           ]
+        },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
         },
         "title": {
           "type": "string",
@@ -206,6 +295,14 @@
         },
         "cover": {
           "type": "string"
+        },
+        "coverAsset": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
         },
         "stage": {
           "default": "active",
@@ -250,6 +347,27 @@
             "archived"
           ]
         },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
+        },
         "title": {
           "type": "string",
           "minLength": 1
@@ -291,6 +409,10 @@
         "cover": {
           "type": "string"
         },
+        "coverAsset": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
         "url": {
           "type": "string",
           "format": "uri"
@@ -325,6 +447,27 @@
             "published",
             "archived"
           ]
+        },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
         },
         "name": {
           "type": "string",
@@ -375,6 +518,27 @@
             "archived"
           ]
         },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
+        },
         "title": {
           "type": "string"
         },
@@ -391,6 +555,399 @@
         "title",
         "description",
         "updatedDate"
+      ]
+    },
+    "gallery": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "default": 1,
+          "type": "number",
+          "const": 1
+        },
+        "contentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publication": {
+          "default": "published",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published",
+            "archived"
+          ]
+        },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "default": "",
+          "type": "string"
+        },
+        "assetId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "themes": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "location": {
+          "type": "string"
+        },
+        "related": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "posts",
+                "memos",
+                "projects",
+                "gallery"
+              ]
+            },
+            "contentId": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "contentId"
+          ]
+        }
+      },
+      "required": [
+        "contentId",
+        "title",
+        "assetId",
+        "date"
+      ]
+    },
+    "cards": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "default": 1,
+          "type": "number",
+          "const": 1
+        },
+        "contentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publication": {
+          "default": "published",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published",
+            "archived"
+          ]
+        },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "note",
+            "image",
+            "feature"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "default": "",
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "assetId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "order": {
+          "default": 0,
+          "type": "number"
+        },
+        "label": {
+          "default": "LITTLE MOMENTS",
+          "type": "string"
+        },
+        "appearance": {
+          "default": "tape",
+          "type": "string",
+          "enum": [
+            "tape",
+            "plain",
+            "postcard"
+          ]
+        },
+        "fit": {
+          "type": "string",
+          "enum": [
+            "cover",
+            "contain"
+          ]
+        },
+        "related": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "posts",
+                "memos",
+                "projects",
+                "gallery"
+              ]
+            },
+            "contentId": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "contentId"
+          ]
+        },
+        "galleryId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        }
+      },
+      "required": [
+        "contentId",
+        "type",
+        "title",
+        "date"
+      ]
+    },
+    "topics": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "default": 1,
+          "type": "number",
+          "const": 1
+        },
+        "contentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publication": {
+          "default": "published",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published",
+            "archived"
+          ]
+        },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "posts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "order": {
+          "default": 0,
+          "type": "number"
+        },
+        "updatedDate": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "contentId",
+        "title",
+        "description",
+        "posts",
+        "updatedDate"
+      ]
+    },
+    "updates": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "default": 1,
+          "type": "number",
+          "const": 1
+        },
+        "contentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publication": {
+          "default": "published",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published",
+            "archived"
+          ]
+        },
+        "updates": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "text"
+            ]
+          }
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "kind": {
+          "default": "site",
+          "type": "string",
+          "enum": [
+            "site",
+            "content"
+          ]
+        },
+        "related": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "posts",
+                "memos",
+                "projects",
+                "gallery"
+              ]
+            },
+            "contentId": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "contentId"
+          ]
+        }
+      },
+      "required": [
+        "contentId",
+        "title",
+        "description",
+        "date"
       ]
     },
     "site": {
@@ -486,17 +1043,13 @@
             },
             "description": {
               "type": "string"
-            },
-            "note": {
-              "type": "string"
             }
           },
           "required": [
             "eyebrow",
             "title",
             "emphasis",
-            "description",
-            "note"
+            "description"
           ]
         },
         "features": {
@@ -632,8 +1185,124 @@
         "music",
         "quotes"
       ]
+    },
+    "asset": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "src": {
+          "type": "string",
+          "pattern": "^\\/images\\/library\\/[a-z0-9-]+\\.webp$"
+        },
+        "width": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "height": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "variants": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "pattern": "^\\/images\\/library\\/[a-z0-9-]+\\.webp$"
+              },
+              "width": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "height": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "src",
+              "width",
+              "height"
+            ]
+          }
+        },
+        "focal": {
+          "default": {
+            "x": 50,
+            "y": 50
+          },
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            }
+          },
+          "required": [
+            "x",
+            "y"
+          ]
+        },
+        "fit": {
+          "default": "cover",
+          "type": "string",
+          "enum": [
+            "cover",
+            "contain"
+          ]
+        },
+        "caption": {
+          "default": "",
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "alt",
+        "src",
+        "width",
+        "height",
+        "variants",
+        "createdAt",
+        "fingerprint"
+      ]
     }
   },
+  "assetRegistry": "src/data/assets.json",
+  "assetReference": "assetId; Markdown image URL asset:<id>",
   "operations": [
     "list",
     "read",
