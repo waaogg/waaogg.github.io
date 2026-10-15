@@ -3,12 +3,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection, getEntry } from 'astro:content';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { siteConfig } from '../site.config';
-import { publishedPosts, publishedMemos, formatDate } from '../lib/content';
+import { publishedPosts, publishedMemos } from '../lib/content';
 import { isPublished } from '../lib/publication';
 import PostRow from '../components/PostRow.astro';
 import MemoCard from '../components/MemoCard.astro';
 import BookCover from '../components/BookCover.astro';
 import Quote from '../components/Quote.astro';
+import HeroCards from '../components/HeroCards.astro';
+import {publishedTopics} from '../lib/discovery';
+const topics=(await publishedTopics()).slice(0,2);
 const posts = await publishedPosts();
 const featured = posts.find(post => post.data.featured);
 const recent = posts.filter(post => post.id !== featured?.id).slice(0,3);
@@ -20,8 +23,10 @@ const media = (await getCollection('media', ({data}) => isPublished(data))).sort
 <BaseLayout>
   <section class="hero">
     <div class="reveal"><p class="eyebrow">{siteConfig.hero.eyebrow}</p><h1>{siteConfig.hero.title}<em>{siteConfig.hero.emphasis}</em></h1><p class="hero-description">{siteConfig.hero.description}</p><div class="hero-actions"><a class="button" href="/posts/">翻开手记 <ArrowRight size={14} /></a><a class="text-link" href="/about/">关于这个小角落 <ArrowUpRight size={13} /></a></div></div>
-    <aside class="journal-card" aria-label="一张生活便签"><div class="journal-top"><span>A LITTLE NOTE</span><span>VOL. 01</span></div><div class="journal-art" aria-hidden="true"><div class="art-orbit"></div><div class="art-window"></div></div><blockquote>{siteConfig.hero.note}</blockquote><div class="journal-bottom"><span class="status-dot">记录中，未完待续</span><span>{formatDate(new Date())}</span></div></aside>
+    <HeroCards/>
   </section>
+  <aside class="resume-banner" data-resume-banner hidden><div><span class="eyebrow">PICK UP WHERE YOU LEFT OFF</span><a data-resume-link href="/library/">继续上次的阅读</a><span class="meta" data-resume-progress></span></div><a class="text-link muted" href="/library/?view=reading">阅读记录 ↗</a></aside>
+  {topics.length>0&&<section class="home-topics section"><div class="section-heading"><h2>沿着线索读 <small>READING THREADS</small></h2><a class="text-link muted" href="/topics/">全部专题 ↗</a></div><div class="home-topic-grid">{topics.map(topic=><a class="topic-preview" href={'/topics/'+topic.id+'/'}><h3>{topic.data.title} ↗</h3><p>{topic.data.description}</p><span class="meta">{topic.data.posts.filter(id=>posts.some(p=>p.data.contentId===id)).length} 篇文字</span></a>)}</div></section>}
   <div class="home-body">
     <div>
       <section class="section reveal delay-1"><div class="section-heading"><h2>纸上片刻 <small>RECENT WRITING</small></h2><a class="text-link muted" href="/posts/">全部文章 <ArrowRight size={13} /></a></div>
@@ -39,6 +44,6 @@ const media = (await getCollection('media', ({data}) => isPublished(data))).sort
       <section class="section"><p class="eyebrow">SAY HELLO</p><h3 class="serif" style="font-size:23px;margin:15px 0">路过，就坐一会儿。</h3><p class="muted" style="font-size:12px;line-height:1.9">一句问候，一个想法，或者你的小站地址。欢迎留下你的声音。</p><a class="text-link accent" href="/guestbook/">写一条留言 <ArrowUpRight size={13} /></a></section>
     </aside>
   </div>
-  {media.length > 0 && <section class="section"><div class="section-heading"><h2>精神食粮 <small>ON THE SHELF</small></h2><a class="text-link muted" href="/media/">整面书架 <ArrowRight size={13} /></a></div><div class="shelf-strip">{media.map(item => <a class="shelf-mini" href={'/media/#' + item.id}><BookCover title={item.data.title} type={item.data.type} cover={item.data.cover} /><div><strong>{item.data.title.split('(')[0]}</strong><small>{item.data.type === 'book' ? '正在阅读的世界' : item.data.type === 'movie' ? '光影里的故事' : '生活的另一种节奏'}</small></div></a>)}</div></section>}
+  {media.length > 0 && <section class="section"><div class="section-heading"><h2>精神食粮 <small>ON THE SHELF</small></h2><a class="text-link muted" href="/media/">整面书架 <ArrowRight size={13} /></a></div><div class="shelf-strip">{media.map(item => <a class="shelf-mini" href={'/media/#' + item.id}><BookCover title={item.data.title} type={item.data.type} cover={item.data.cover} assetId={item.data.coverAsset} /><div><strong>{item.data.title.split('(')[0]}</strong><small>{item.data.type === 'book' ? '正在阅读的世界' : item.data.type === 'movie' ? '光影里的故事' : '生活的另一种节奏'}</small></div></a>)}</div></section>}
   <section class="section" style="padding-block:10px"><Quote /></section>
 </BaseLayout>

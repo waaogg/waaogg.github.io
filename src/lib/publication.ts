@@ -1,8 +1,8 @@
-export interface Publication { publication?: 'draft' | 'published' | 'archived'; isDraft?: boolean; pubDate?: Date; }
+export interface Publication { publication?: 'draft' | 'published' | 'archived'; isDraft?: boolean; pubDate?: Date; date?:Date; }
 /** Shared by routes, feeds, lists, search and random navigation. */
 export function isPublished(data: Publication, now = new Date()): boolean {
   return !data.isDraft && (data.publication ?? 'published') === 'published'
-    && (!data.pubDate || data.pubDate.getTime() <= now.getTime());
+    && (!data.pubDate || data.pubDate.getTime() <= now.getTime()) && (!data.date || data.date.getTime()<=now.getTime());
 }
 export function postPath(post: { id: string; data: { slug?: string } }): string { return '/posts/' + (post.data.slug || post.id) + '/'; }
 export const growthLabels = { seedling: '萌芽', budding: '生长中', evergreen: '常青' };

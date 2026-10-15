@@ -1,0 +1,7 @@
+---
+import { getAsset } from '../lib/assets';
+interface Props { id:string; alt?:string; eager?:boolean; class?:string; sizes?:string; fit?:'cover'|'contain'; }
+const {id,alt,eager=false,class:className,sizes='(max-width: 640px) 90vw, 480px',fit}=Astro.props;
+const asset=getAsset(id);
+---
+<img class={className} src={asset.src} srcset={asset.variants.map(v=>`${v.src} ${v.width}w`).join(', ')} sizes={sizes} width={asset.width} height={asset.height} alt={alt || asset.alt} loading={eager?'eager':'lazy'} decoding="async" fetchpriority={eager?'high':'auto'} data-full-src={asset.src} style={{objectPosition:asset.focal.x+'% '+asset.focal.y+'%',objectFit:fit||asset.fit}} />

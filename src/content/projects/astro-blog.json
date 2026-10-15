@@ -14,5 +14,6 @@
   "githubUrl": "https://github.com/waaogg/waaogg.github.io",
   "badge": "本站源码",
   "featured": true,
-  "order": -1
+  "order": -1,
+  "updates": [{"date":"2026-10-15T00:00:00+08:00","text":"新增生活卡片、共享图库、影像集、专题、本地阅读记录与更新页。"}]
 }

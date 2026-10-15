@@ -1,0 +1,24 @@
+---
+import {getCollection} from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {publishedPosts,publishedMemos,postPath,formatDate} from '../../lib/content';
+import {publishedGallery,resolveTarget} from '../../lib/discovery';
+import {isPublished} from '../../lib/publication';
+type Update={id:string;date:Date;type:string;label:string;title:string;text:string;path?:string};
+const events:Update[]=[];
+for(const p of await publishedPosts()){
+  events.push({id:p.data.contentId,date:p.data.pubDate,type:'posts',label:'发布文章',title:p.data.title,text:p.data.description,path:postPath(p)});
+  for(const [i,u] of p.data.updates.entries())events.push({id:p.data.contentId+'-'+i,date:u.date,type:'posts',label:'修订文章',title:p.data.title,text:u.text,path:postPath(p)});
+  if(p.data.updatedDate&&!p.data.updates.some(u=>u.date.valueOf()===p.data.updatedDate!.valueOf()))events.push({id:p.data.contentId+'-updated',date:p.data.updatedDate,type:'posts',label:'更新文章',title:p.data.title,text:'文字有了新的补充。',path:postPath(p)});
+}
+for(const m of await publishedMemos())events.push({id:m.data.contentId,date:m.data.date,type:'memos',label:'一则日常',title:m.body?.replace(/[#*>\n]/g,' ').trim().slice(0,48)||'日常片刻',text:'留下一个值得记录的片刻。',path:'/memos/'+m.id+'/'});
+for(const g of await publishedGallery())events.push({id:g.data.contentId,date:g.data.date,type:'gallery',label:'新增影像',title:g.data.title,text:g.data.description,path:'/gallery/'+g.id+'/'});
+for(const p of await getCollection('projects',({data})=>isPublished(data))){for(const [i,u] of p.data.updates.entries())events.push({id:p.data.contentId+'-'+i,date:u.date,type:'projects',label:'作品进展',title:p.data.title,text:u.text,path:'/projects/'+p.id+'/'});}
+for(const u of await getCollection('updates',({data})=>isPublished(data))){const target=await resolveTarget(u.data.related);events.push({id:u.data.contentId,date:u.data.date,type:u.data.kind,label:u.data.kind==='site'?'小站更新':'内容动态',title:u.data.title,text:u.data.description,path:target?.path});}
+const visible=events.filter(e=>e.date.valueOf()<=Date.now()).sort((a,b)=>b.date.valueOf()-a.date.valueOf()||a.id.localeCompare(b.id));
+const labels:Record<string,string>={site:'小站更新',posts:'文章',memos:'日常',projects:'作品',gallery:'影像',content:'内容动态'};
+---
+<BaseLayout title="小站生长记" description="新文字、新影像和持续发生的小变化。"><div class="narrow"><header class="page-head"><p class="eyebrow">STILL GROWING</p><h1>小站生长记<span class="accent">。</span></h1><p>记下新内容，也记下旧文字如何慢慢改变。</p></header>
+  <form class="filter-bar" data-collection-filters data-results="updates" aria-label="筛选更新"><label>类型 <select class="filter-select" name="type"><option value="">所有动态</option>{Object.entries(labels).map(([key,label])=><option value={key}>{label}</option>)}</select></label><button type="reset" class="text-link">重置</button><span class="meta" data-filter-count aria-live="polite"></span></form>
+  <ol class="update-timeline">{visible.map(e=><li data-filter-row="updates" data-type={e.type}><time datetime={e.date.toISOString()}>{formatDate(e.date)}</time><div><span class="eyebrow">{e.label}</span><h2>{e.path?<a href={e.path}>{e.title} ↗</a>:e.title}</h2><p>{e.text}</p></div></li>)}</ol><p class="empty-state" data-filter-empty="updates" hidden={visible.length>0}>这个分类还没有更新。</p>
+</div></BaseLayout>

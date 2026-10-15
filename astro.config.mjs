@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite';
 import site from './src/data/site.json' with { type: 'json' };
 import { loadEnv } from 'vite';
 import { fileURLToPath } from 'node:url';
+import remarkAssets from './scripts/remark-assets.mjs';
+import { satteri } from '@astrojs/markdown-satteri';
 const env = loadEnv(process.env.NODE_ENV || 'production', fileURLToPath(new URL('.', import.meta.url)), 'PUBLIC_');
 
 // https://astro.build/config
@@ -13,7 +15,7 @@ export default defineConfig({
   site: process.env.PUBLIC_SITE_URL || env.PUBLIC_SITE_URL || site.site,
   trailingSlash: 'always',
   integrations: [react()],
-  markdown: { shikiConfig: {
+  markdown: { processor:satteri({mdastPlugins:[remarkAssets]}), shikiConfig: {
     themes: { light: 'github-light', dark: 'github-dark' },
     transformers: [{
       name: 'journal-code',

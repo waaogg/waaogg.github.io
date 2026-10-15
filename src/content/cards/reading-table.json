@@ -1,0 +1,15 @@
+{
+  "contentId": "card-reading-table",
+  "type": "feature",
+  "title": "阅读时分",
+  "text": "一些片刻，可以慢慢写成文字。示例插画。",
+  "date": "2026-10-15T00:00:00+08:00",
+  "assetId": "reading-table",
+  "related": {
+    "kind": "posts",
+    "contentId": "post-slow-notes"
+  },
+  "label": "READ & REMEMBER",
+  "order": 3,
+  "appearance": "postcard"
+}

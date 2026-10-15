@@ -2,3 +2,4 @@
 *.wav binary
 *.ico binary
 *.sqlite binary
+*.webp binary

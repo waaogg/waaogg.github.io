@@ -5,6 +5,9 @@ publication: published
 date: 2026-10-15T16:30:00+08:00
 mood: ☕
 tags: [日常, 留白]
+images:
+  - assetId: window-light
+    caption: 窗边微光 · 示例插画，可替换为自己的照片。
 ---
 
 给今天留一点没有安排的时间。

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AssetImage from '../../components/AssetImage.astro';
+import SaveButton from '../../components/SaveButton.astro';
+import {publishedGallery,resolveTarget} from '../../lib/discovery';
+import {formatDate} from '../../lib/publication';
+import {getAsset} from '../../lib/assets';
+export async function getStaticPaths(){return (await publishedGallery()).map(item=>({params:{id:item.id},props:{item}}));}
+const {item}=Astro.props,items=await publishedGallery(),index=items.findIndex(i=>i.id===item.id),related=await resolveTarget(item.data.related);
+---
+<BaseLayout title={item.data.title} description={item.data.description} image={getAsset(item.data.assetId).src}>
+  <div class="narrow"><header class="page-head"><a class="text-link muted" href="/gallery/">← 回到影像集</a><p class="eyebrow" style="margin-top:28px">A MOMENT TO KEEP</p><h1 data-pagefind-meta="title">{item.data.title}</h1><div class="meta"><time datetime={item.data.date.toISOString()}>{formatDate(item.data.date)}</time>{item.data.location&&<span>{item.data.location}</span>}<SaveButton id={item.data.contentId}/></div></header>
+    <article data-pagefind-body><span hidden data-pagefind-ignore data-pagefind-meta="type">影像</span><span hidden data-pagefind-ignore data-pagefind-filter="type">影像</span><button class="gallery-detail-image" type="button" data-image-open data-image-group="detail" data-caption={item.data.title+' · '+item.data.description} aria-label={'查看大图：'+item.data.title}><AssetImage id={item.data.assetId} eager fit="contain" sizes="(max-width: 760px) 92vw, 760px"/><span class="image-hint">查看大图 ↗</span></button><p class="image-story">{item.data.description}</p><div class="tag-row">{item.data.themes.map(t=><a class="tag" href={'/gallery/?theme='+encodeURIComponent(t)}>{t}</a>)}</div></article>
+    {related&&<a class="mini-project" href={related.path}><span class="meta">这张影像关联的{related.label}</span><strong>{related.title} ↗</strong></a>}
+    <nav class="post-neighbors" aria-label="相邻影像">{items[index+1]?<a href={'/gallery/'+items[index+1].id+'/'}><small>← 上一个片刻</small><span>{items[index+1].data.title}</span></a>:<span/>}{items[index-1]?<a href={'/gallery/'+items[index-1].id+'/'}><small>下一个片刻 →</small><span>{items[index-1].data.title}</span></a>:<span/>}</nav>
+  </div>
+</BaseLayout>

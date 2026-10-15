@@ -1,0 +1,116 @@
+[
+  {
+    "id": "window-light",
+    "title": "窗边微光",
+    "alt": "一幅窗边阳光与植物的示例插画",
+    "src": "/images/library/window-light-5f4f0fb15da9-1200.webp",
+    "width": 1200,
+    "height": 900,
+    "variants": [
+      {
+        "src": "/images/library/window-light-8e30852d4c16-320.webp",
+        "width": 320,
+        "height": 240
+      },
+      {
+        "src": "/images/library/window-light-e7ce1178769c-640.webp",
+        "width": 640,
+        "height": 480
+      },
+      {
+        "src": "/images/library/window-light-41178ad437d1-960.webp",
+        "width": 960,
+        "height": 720
+      },
+      {
+        "src": "/images/library/window-light-5f4f0fb15da9-1200.webp",
+        "width": 1200,
+        "height": 900
+      }
+    ],
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "fit": "cover",
+    "caption": "本站绘制的示例插画，可替换为自己的照片。",
+    "createdAt": "2026-10-15T12:28:39.902Z",
+    "fingerprint": "426b9979c13863fb37dd3e3966d943ee4b181d33bf20b1cc836bd29d2275b76f"
+  },
+  {
+    "id": "quiet-hills",
+    "title": "山间留白",
+    "alt": "一幅远山与小路的示例插画",
+    "src": "/images/library/quiet-hills-13370a62c7c5-1200.webp",
+    "width": 1200,
+    "height": 900,
+    "variants": [
+      {
+        "src": "/images/library/quiet-hills-718aa36556b5-320.webp",
+        "width": 320,
+        "height": 240
+      },
+      {
+        "src": "/images/library/quiet-hills-45b2cedb7e6c-640.webp",
+        "width": 640,
+        "height": 480
+      },
+      {
+        "src": "/images/library/quiet-hills-27737c437a02-960.webp",
+        "width": 960,
+        "height": 720
+      },
+      {
+        "src": "/images/library/quiet-hills-13370a62c7c5-1200.webp",
+        "width": 1200,
+        "height": 900
+      }
+    ],
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "fit": "cover",
+    "caption": "本站绘制的示例插画，可替换为自己的照片。",
+    "createdAt": "2026-10-15T12:28:39.993Z",
+    "fingerprint": "089e69953d0f24272b6e74178339dda8271b7d6ab05d325c641b40f2f4ffae75"
+  },
+  {
+    "id": "reading-table",
+    "title": "阅读时分",
+    "alt": "一幅书本、茶杯与桌面的示例插画",
+    "src": "/images/library/reading-table-c91cff4242fc-1200.webp",
+    "width": 1200,
+    "height": 900,
+    "variants": [
+      {
+        "src": "/images/library/reading-table-3c85c5957bd5-320.webp",
+        "width": 320,
+        "height": 240
+      },
+      {
+        "src": "/images/library/reading-table-e3d63bd1761d-640.webp",
+        "width": 640,
+        "height": 480
+      },
+      {
+        "src": "/images/library/reading-table-bb1fa1406511-960.webp",
+        "width": 960,
+        "height": 720
+      },
+      {
+        "src": "/images/library/reading-table-c91cff4242fc-1200.webp",
+        "width": 1200,
+        "height": 900
+      }
+    ],
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "fit": "cover",
+    "caption": "本站绘制的示例插画，可替换为自己的照片。",
+    "createdAt": "2026-10-15T12:28:40.081Z",
+    "fingerprint": "8da5dfe66c627afc54e39e402509bc1343d22269502ffa47522d1e34ebf2346a"
+  }
+]

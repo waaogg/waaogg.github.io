@@ -14,13 +14,16 @@
     "astro": "astro",
     "content": "node --experimental-strip-types scripts/content.mjs",
     "contract": "node --experimental-strip-types scripts/generate-contract.mjs",
-    "prebuild": "npm run content -- validate && npm run contract",
+    "prebuild": "npm run content -- validate && npm run assets -- validate && npm run contract",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "verify": "node scripts/verify-build.mjs",
     "test:publication": "node scripts/test-publication.mjs",
-    "cloud:check": "node scripts/check-cloud-env.mjs"
+    "cloud:check": "node scripts/check-cloud-env.mjs",
+    "assets": "node --experimental-strip-types scripts/assets.mjs",
+    "test:gallery": "node scripts/test-gallery-states.mjs"
   },
   "dependencies": {
+    "@astrojs/markdown-satteri": "0.4.3",
     "@astrojs/react": "^7.0.1",
     "@astrojs/rss": "^4.0.19",
     "@tailwindcss/vite": "^4.3.3",
@@ -33,6 +36,7 @@
     "pagefind": "^1.5.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "sharp": "0.35.5",
     "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4.3.3",
     "yaml": "^2.9.1"

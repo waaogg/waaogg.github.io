@@ -1,0 +1,15 @@
+---
+import {render} from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {publishedTopics} from '../../lib/discovery';
+import {publishedPosts,postPath,readingStats} from '../../lib/content';
+import SaveButton from '../../components/SaveButton.astro';
+export async function getStaticPaths(){return (await publishedTopics()).map(topic=>({params:{id:topic.id},props:{topic}}));}
+const {topic}=Astro.props,{Content}=await render(topic),posts=await publishedPosts();
+const ordered=topic.data.posts.flatMap(id=>{const p=posts.find(item=>item.data.contentId===id);return p?[p]:[];});
+---
+<BaseLayout title={topic.data.title} description={topic.data.description}><div class="narrow"><header class="page-head"><a class="text-link muted" href="/topics/">← 所有专题</a><h1 data-pagefind-meta="title">{topic.data.title}</h1><p>{topic.data.description}</p><div class="meta"><span>{ordered.length} 篇文字</span><span data-topic-progress={JSON.stringify(ordered.map(p=>p.data.contentId))}></span><SaveButton id={topic.data.contentId}/></div></header>
+  <article class="article-body topic-intro" data-pagefind-body><span hidden data-pagefind-ignore data-pagefind-meta="type">专题</span><span hidden data-pagefind-ignore data-pagefind-filter="type">专题</span><Content/></article>
+  <ol class="series-list" aria-label="专题阅读顺序">{ordered.map((post,i)=><li><span class="series-number">{String(i+1).padStart(2,'0')}</span><div><h2><a href={postPath(post)}>{post.data.title}</a></h2><p>{post.data.description}</p><span class="meta">约 {readingStats(post.body||'').minutes} 分钟 · <span data-read-status={post.data.contentId}>未读</span></span></div></li>)}</ol>
+  {!ordered.length&&<p class="empty-state">这个专题的文章正在准备中。</p>}
+</div></BaseLayout>

@@ -1,12 +1,14 @@
 // Local-only negative UI test: serve the built site with the search index unavailable.
 import { createServer } from 'node:http';
-import { existsSync, statSync, createReadStream } from 'node:fs';
+import { existsSync, statSync, createReadStream, readFileSync } from 'node:fs';
 import { resolve, join, extname, sep } from 'node:path';
 const root=resolve('dist'),types={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.wav':'audio/wav','.wasm':'application/wasm','.json':'application/json'};
+types['.webp']='image/webp';
+const imageFailure=process.argv.includes('--images'),brokenImage=JSON.parse(readFileSync('src/data/assets.json','utf8'))[0]?.src;
 createServer((request,response)=>{
   try{
     const pathname=decodeURIComponent(new URL(request.url,'http://localhost').pathname);
-    if(pathname==='/pagefind/pagefind.js'){response.writeHead(503);response.end('Search index unavailable for negative test');return;}
+    if((!imageFailure&&pathname==='/pagefind/pagefind.js')||(imageFailure&&pathname===brokenImage)){response.writeHead(503);response.end('Resource unavailable for negative test');return;}
     let file=resolve(root,'.'+pathname);
     if(file!==root&&!file.startsWith(root+sep)){response.writeHead(403);response.end();return;}
     if(existsSync(file)&&statSync(file).isDirectory())file=join(file,'index.html');

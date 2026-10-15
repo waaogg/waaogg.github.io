@@ -18,8 +18,7 @@
     "eyebrow": "文字 · 作品 · 生活",
     "title": "把日常，",
     "emphasis": "慢慢写成自己的故事。",
-    "description": "这里安放认真想过的事，也留下偶然遇见的风景。无需每次都言之有物，记录本身就有意义。",
-    "note": "保持好奇，留一点时间给喜欢的事。"
+    "description": "这里安放认真想过的事，也留下偶然遇见的风景。无需每次都言之有物，记录本身就有意义。"
   },
   "features": {
     "music": true,
@@ -41,6 +40,26 @@
     }
   ],
   "explore": [
+    {
+      "label": "影像",
+      "href": "/gallery/",
+      "description": "照片、插画与日常片刻"
+    },
+    {
+      "label": "专题",
+      "href": "/topics/",
+      "description": "沿着线索，读一组故事"
+    },
+    {
+      "label": "阅读角落",
+      "href": "/library/",
+      "description": "本地收藏与继续阅读"
+    },
+    {
+      "label": "更新",
+      "href": "/updates/",
+      "description": "小站持续生长的记录"
+    },
     {
       "label": "书影音",
       "href": "/media/",

@@ -1,4 +1,7 @@
 import { navigate } from 'astro:transitions/client';
+import { setupVisuals } from './visuals';
+import { setupLibrary } from './library';
+import { setupCollectionFilters } from './collection-filters';
 
 let teardown: (() => void) | undefined;
 let returnFocus: HTMLElement | null = null;
@@ -41,6 +44,9 @@ function setupPage() {
   applyPreferences(); applyReading();
   const controller = new AbortController();
   const { signal } = controller;
+  setupVisuals({signal,openDialog});
+  setupCollectionFilters(signal);
+  const saveReading=setupLibrary(signal);
   // Footnotes are handled in place; keep the router from starting an anchor navigation.
   document.querySelectorAll<HTMLAnchorElement>('a[data-footnote-ref]').forEach(link => link.setAttribute('data-astro-reload',''));
   document.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog => {
@@ -103,7 +109,8 @@ function setupPage() {
     });
   };
   window.addEventListener('scroll', onScroll, { passive: true, signal }); onScroll();
-  teardown = () => { controller.abort(); cancelAnimationFrame(frame); document.querySelector('.footnote-popover')?.remove(); };
+  let disposed=false;
+  teardown = () => { if(disposed)return;disposed=true;saveReading(); controller.abort(); cancelAnimationFrame(frame); document.querySelector('.footnote-popover')?.remove(); };
 }
 document.addEventListener('click', event => {
   const target = (event.target as Element).closest<HTMLElement>('button, a');
@@ -130,12 +137,6 @@ document.addEventListener('click', event => {
     }
   }
   if (target.tagName === 'A' && target.closest('dialog')) closeDialogs();
-});
-document.addEventListener('click', event => {
-  const img = event.target;
-  if (!(img instanceof HTMLImageElement) || !img.closest('#article-content, .memo-gallery, .memo-content')) return;
-  const dialog = document.getElementById('image-dialog') as HTMLDialogElement;
-  const large = dialog.querySelector('img')!; large.src = img.src; large.alt = img.alt; openDialog(dialog);
 });
 document.addEventListener('pointerdown', event => {
   if (!(event.target as Element).closest('[data-footnote-ref], .footnote-popover')) document.querySelector('.footnote-popover')?.remove();

@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {publishedTopics} from '../../lib/discovery';
+import {publishedPosts,formatDate} from '../../lib/content';
+const topics=await publishedTopics(),posts=await publishedPosts();
+---
+<BaseLayout title="把故事连起来" description="专题、系列，以及循着线索展开的阅读。"><div class="narrow"><header class="page-head"><p class="eyebrow">THREADS & COLLECTIONS</p><h1>把故事连起来<span class="accent">。</span></h1><p>有些想法需要不止一篇文章。沿着一个主题，慢慢往下读。</p></header>
+  <div class="topics-list">{topics.map(topic=>{const entries=topic.data.posts.map(id=>posts.find(p=>p.data.contentId===id)).filter(Boolean);return <article class="topic-card"><span class="eyebrow">READING COLLECTION</span><h2><a href={'/topics/'+topic.id+'/'}>{topic.data.title} ↗</a></h2><p>{topic.data.description}</p><div class="meta"><span>{entries.length} 篇文字</span><span>更新于 {formatDate(topic.data.updatedDate)}</span><span data-topic-progress={JSON.stringify(entries.map(p=>p!.data.contentId))}></span></div></article>;})}</div>{!topics.length&&<p class="empty-state">第一组故事，还在整理中。</p>}
+</div></BaseLayout>

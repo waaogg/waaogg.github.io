@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {publicCatalog} from '../../lib/discovery';
+import SaveButton from '../../components/SaveButton.astro';
+const catalog=await publicCatalog();
+---
+<BaseLayout title="我的阅读角落" description="保存在当前浏览器的收藏与阅读进度。" noindex><div class="narrow"><header class="page-head"><p class="eyebrow">YOUR QUIET CORNER</p><h1>我的阅读角落<span class="accent">。</span></h1><p>收藏想再看一次的内容，接着上次停下的地方读。记录仅保存在当前浏览器，不会上传到服务器。</p></header>
+  <div data-library-page><nav class="filter-bar" aria-label="阅读记录类型"><button class="filter-button" type="button" data-library-tab="saved" aria-pressed="true">我的收藏</button><button class="filter-button" type="button" data-library-tab="reading" aria-pressed="false">阅读记录</button><button class="text-link muted" type="button" data-library-clear>清空当前列表</button></nav><p class="meta" data-library-summary aria-live="polite"></p>
+  <div data-library-results>{catalog.map(item=><article class="library-row" data-library-id={item.id} data-kind={item.kind} hidden><div><span class="eyebrow">{item.label}</span><h2><a href={item.path} data-library-link>{item.title}</a></h2><span class="meta" data-library-position></span></div><div class="library-actions"><SaveButton id={item.id}/><button class="text-link muted" type="button" data-library-remove={item.id} hidden>移除记录</button></div></article>)}</div>
+  <div class="empty-state" data-library-empty>还没有收藏。遇到喜欢的内容，点一下“收藏”就能留在这里。</div>
+  <p class="local-library-note muted">清理浏览器数据会移除这些记录；不同设备不会自动同步。已下线的内容不会继续出现在列表中。</p></div>
+  <noscript><p class="empty-state">启用 JavaScript 后可查看本地收藏与阅读记录。</p></noscript>
+</div></BaseLayout>

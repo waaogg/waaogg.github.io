@@ -4,7 +4,7 @@ import { resolve, dirname, extname, basename } from 'node:path';
 import { parse, stringify } from 'yaml';
 import { contentSchemas, siteSchema } from '../../src/lib/schemas.ts';
 
-export const markdownKinds = new Set(['posts','memos','pages']);
+export const markdownKinds = new Set(['posts','memos','pages','topics']);
 export const revisionOf = text => createHash('sha256').update(text).digest('hex');
 export function contentPath(root, kind, slug) {
   if (kind === 'site') return resolve(root,'src/data/site.json');

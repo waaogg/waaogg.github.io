@@ -11,6 +11,11 @@
 | 书影音 | src/content/media/*.json | 条目、体验状态、可选评分与短评 | 书架和筛选 |
 | 友链 | src/content/friends/*.json | 名称、网址、头像、分组 | 展示与缺图兜底 |
 | 关于、近况、幕后 | src/content/pages/*.md | 自己的正文与更新时间 | 统一页面布局 |
+| 首页生活卡片 | src/content/cards/*.json | 类型、文案、图片引用、日期、顺序与样式 | 叠放、拖拽、键盘切换和大图浏览 |
+| 影像集 | src/content/gallery/*.json | 图片引用、标题、描述、日期、主题、可选地点 | 年份与主题筛选、详情、相邻影像 |
+| 专题系列 | src/content/topics/*.md | 标题、简介、说明正文、文章 contentId 顺序 | 专题目录、上下篇衔接、本地阅读状态 |
+| 小站更新 | src/content/updates/*.json | 日期、标题、说明、类型、可选关联内容 | 与文章、日常、影像、作品进展汇总为时间线 |
+| 图片资源 | src/data/assets.json | 导入时填写 ID、说明、焦点与裁切方式 | WebP、多尺寸、元数据移除、共享引用 |
 
 默认内容都是可替换示例。文章数、搜索、目录、归档、构建时间不需要手填。
 
@@ -51,3 +56,35 @@ payload 包含 data（元信息）和 body（Markdown 正文）。旧 revision �
 “保存”与“上线”分开：排队、构建中、已上线、失败分别返回状态；失败保留旧站。草稿预览不能混入公开 dist。定时发表需要外部调度触发构建，静态页面不会到时间自行改变。
 
 图片可以写 Markdown 链接，也可使用日常的 images 数组，每张填写 src、alt、可选 caption。音频既支持站内路径，也支持 HTTPS 外链。内置 WAV 是本站脚本合成的轻音片段，可替换为自己的歌单。
+
+## 统一图库
+
+本地导入一张图（不是在线上传平台）：
+
+~~~bash
+npm run assets -- import "D:/Photos/window.jpg" --id my-window --alt "窗边的一盆绿植" --title "午后" --x 50 --y 40 --fit cover
+npm run assets -- list
+npm run assets -- validate
+~~~
+
+支持 Sharp 能读取的静态图片；自动按相机方向旋转，生成320/640/960/1600宽度的WebP，小图不放大。导出的图片移除EXIF等源图元数据，原文件不复制到公开目录。所有导入结果都是公开资源，请只导入愿意公开的图片。输出文件名包含图片内容哈希，可长期缓存。
+
+导入后可在 src/data/assets.json 修改 title、alt、caption、focal（x/y为0–100）与fit（cover铺满、contain完整显示）。不手改id、src、尺寸或variants；替换图片时导入新ID，再更改内容引用，避免破坏旧文章。
+
+同一张图片可用于：文章 heroAsset、作品和书影音 coverAsset、卡片及影像的 assetId、日常 images: [{assetId, caption}]，以及 Markdown 的 `![图片说明](asset:my-window)`。构建时检查引用是否存在。原有src/heroImage/cover写法仍支持。
+
+内置三张图片为本站绘制并标注的示例插画，不代表真实拍摄或个人经历。
+
+## 首页卡片和影像
+
+cards支持note、image、feature。图片卡和推荐卡必须有assetId；order越小越靠前；appearance支持tape胶带、plain纸卡、postcard明信片；fit可单独覆盖图片裁切方式。date为你填写的记录日期，不是构建日期。galleryId关联影像文件名；related使用 {kind, contentId} 关联文章、日常、作品或影像。未发布的关联不会生成公开入口。
+
+首页建议精选4–8张，全部内容在影像集长期保存。gallery的themes用于筛选，location可省略，description为图注与故事。只有一张卡片时不显示翻页按钮；没有卡片时展示纯文字首页。手机支持左右拖动和正常纵向滚动。
+
+## 专题、修订和本地阅读
+
+topics的posts填写文章稳定contentId，按数组顺序排列；隐藏或未来文章不进入公开目录、衔接链接与阅读统计。topics是Markdown内容，可使用 npm run content -- new topics my-series 创建默认草稿。
+
+文章或作品可填写 updates: [{date, text}]。文章修订在详情中展示，作品进展和文章修订汇入 /updates/；新增文章、日常和影像自动产生时间线条目。独立小站公告放在updates集合。所有未来更新记录在该时间到达并重新构建后才公开。
+
+/library/仅使用当前浏览器localStorage保存收藏与最近100篇阅读位置。文章、日常、作品、影像、专题均可收藏；文章记录进度，首页提供继续阅读，专题显示已读状态。可以移除单条、清空收藏或阅读列表；浏览器禁用存储时会提示保存失败。没有账户或服务器同步，不属于在线编辑与发布台。

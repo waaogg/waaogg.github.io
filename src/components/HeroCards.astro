@@ -1,0 +1,24 @@
+---
+import {getCollection} from 'astro:content';
+import {isPublished,formatDate} from '../lib/publication';
+import AssetImage from './AssetImage.astro';
+import {resolveTarget} from '../lib/discovery';
+const cards=(await getCollection('cards',({data})=>isPublished(data))).sort((a,b)=>a.data.order-b.data.order);
+const gallery=await getCollection('gallery',({data})=>isPublished(data));
+const items=await Promise.all(cards.map(async c=>({...c,target:await resolveTarget(c.data.related),gallery:gallery.find(g=>g.id===c.data.galleryId)})));
+---
+{items.length>0 && <aside class="moment-deck" data-moment-deck role="region" aria-roledescription="轮播" aria-label="翻阅生活卡片" tabindex="0">
+  <div class="moment-stack" data-deck-surface>
+    {items.map((card,i)=><article class="journal-card moment-card" data-moment-card data-appearance={card.data.appearance} data-position={i===0?'front':i===1?'behind-one':i===2?'behind-two':'away'} aria-hidden={i!==0?'true':undefined} inert={i!==0} role="group" aria-roledescription="卡片" aria-label={(i+1)+' / '+items.length+'：'+card.data.title}>
+      <div class="journal-top"><span>{card.data.label}</span><span>NO. {String(i+1).padStart(2,'0')}</span></div>
+      {card.data.assetId ? <button type="button" class="moment-image" data-image-open data-image-group="hero" data-caption={card.data.title+' · '+card.data.text} aria-label={'查看大图：'+card.data.title}><AssetImage id={card.data.assetId} fit={card.data.fit} eager={i===0} sizes="(max-width: 640px) 86vw, 360px"/><span class="image-hint">查看大图 ↗</span></button> : <div class="journal-art" aria-hidden="true"><div class="art-orbit"></div><div class="art-window"></div></div>}
+      <div class="moment-copy"><p class="moment-title">{card.data.title}</p>{card.data.text&&<p>{card.data.text}</p>}</div>
+      <div class="journal-bottom"><span class="status-dot">{card.data.type==='note'?'记录中，未完待续':'片刻收藏'}</span><time datetime={card.data.date.toISOString()}>{formatDate(card.data.date)}</time></div>
+      {(card.target||card.gallery)&&<a class="moment-related" href={card.target?.path||'/gallery/'+card.gallery!.id+'/'}>{card.target?'读一读：'+card.target.title:'关于这张影像'} ↗</a>}
+    </article>)}
+    {items.length>1&&<button class="deck-peek" type="button" data-deck-next tabindex="-1" aria-hidden="true" title="翻到下一张"></button>}
+  </div>
+  {items.length>1&&<div class="deck-controls" data-deck-controls hidden><button type="button" data-deck-prev aria-label="上一张生活卡片">←</button><span data-deck-status aria-live="polite" aria-atomic="true">01 / {String(items.length).padStart(2,'0')}</span><button type="button" data-deck-next aria-label="下一张生活卡片">→</button><span class="deck-instruction">拖动翻看</span></div>}
+  <a class="deck-gallery-link" href="/gallery/">翻开整本影像集 ↗</a>
+  <noscript><p class="muted">启用 JavaScript 可翻阅更多卡片，或直接打开影像集。</p></noscript>
+</aside>}

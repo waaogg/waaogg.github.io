@@ -1,6 +1,8 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AssetImage from '../../components/AssetImage.astro';
+import SaveButton from '../../components/SaveButton.astro';
 import Comments from '../../components/Comments.astro';
 import { publishedMemos, formatDate } from '../../lib/content';
 export async function getStaticPaths() { return (await publishedMemos()).map(memo => ({params:{id:memo.id},props:{memo}})); }
@@ -11,6 +13,7 @@ const title = formatDate(memo.data.date) + ' 的日常';
 <BaseLayout title={title} description={(memo.body || '').replace(/[#*!\[\]]/g,'').slice(0,120)} article><div class="narrow">
   <header class="page-head"><a class="text-link muted" href={'/memos/#' + memo.id}>← 回到日常</a><h1 data-pagefind-meta="title">{memo.data.mood} 日常一则</h1><time class="meta" datetime={memo.data.date.toISOString()}>{formatDate(memo.data.date)}</time></header>
   <article class="article-body memo-content" id="article-content" data-pagefind-body><span hidden data-pagefind-ignore data-pagefind-meta="type">日常</span><span hidden data-pagefind-ignore data-pagefind-filter="type">日常</span><Content /></article>
-  {memo.data.images.length > 0 && <div class="memo-gallery">{memo.data.images.map(img => <figure><img src={img.src} alt={img.alt} width="640" height="480" loading="lazy" />{img.caption && <figcaption class="muted">{img.caption}</figcaption>}</figure>)}</div>}
+  <SaveButton id={memo.data.contentId}/>
+  {memo.data.images.length > 0 && <div class="memo-gallery">{memo.data.images.map(img => <figure>{'assetId' in img?<AssetImage id={img.assetId} alt={img.alt}/>:<img src={img.src} alt={img.alt} width="640" height="480" loading="lazy" />}{img.caption && <figcaption class="muted">{img.caption}</figcaption>}</figure>)}</div>}
   <div class="tag-row">{memo.data.tags.map(tag => <span class="tag">#{tag}</span>)}</div><Comments path={'/memos/' + memo.id} title="说点什么" />
 </div></BaseLayout>

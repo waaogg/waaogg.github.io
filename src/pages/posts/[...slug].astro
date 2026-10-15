@@ -6,6 +6,9 @@ import ReadingControls from '../../components/ReadingControls.astro';
 import Comments from '../../components/Comments.astro';
 import { publishedPosts, postPath, formatDate, growthLabels, readingStats } from '../../lib/content';
 import { siteConfig } from '../../site.config';
+import AssetImage from '../../components/AssetImage.astro';
+import SaveButton from '../../components/SaveButton.astro';
+import {publishedTopics} from '../../lib/discovery';
 export async function getStaticPaths() {
   return (await publishedPosts()).map(post => ({ params: { slug: post.data.slug || post.id }, props: { post } }));
 }
@@ -17,6 +20,7 @@ const older = posts[index + 1], newer = posts[index - 1];
 const related = posts.filter(item => item.id !== post.id && item.data.tags.some(tag => post.data.tags.includes(tag))).slice(0,3);
 const stats = readingStats(post.body || '');
 const url = new URL(postPath(post), siteConfig.site).href;
+const topics=(await publishedTopics()).filter(t=>t.data.posts.includes(post.data.contentId));
 ---
 <BaseLayout title={post.data.title} description={post.data.description} image={post.data.heroImage} article>
   <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
@@ -25,17 +29,20 @@ const url = new URL(postPath(post), siteConfig.site).href;
     <div class="tag-row">{post.data.tags.map(tag => <a class="tag" href={'/tags/' + encodeURIComponent(tag) + '/'}>#{tag}</a>)}</div>
     <p class="article-deck">{post.data.description}</p>
     {post.data.updatedDate && <p class="meta">更新于 {formatDate(post.data.updatedDate)}</p>}
+    <div class="article-personal-actions"><SaveButton id={post.data.contentId}/><a class="text-link muted" href="/library/">我的阅读角落 ↗</a><button type="button" class="text-link" data-reading-resume hidden>回到上次读到的位置</button></div>
   </header>
   <div class="article-layout">
     <div class="article-main">
       <TableOfContents headings={headings} mobile />
-      {post.data.heroImage && <img src={post.data.heroImage} alt={post.data.heroAlt || post.data.title} width="1200" height="675" style="border-radius:6px;margin-bottom:30px" />}
-      <article class="article-body" id="article-content" data-pagefind-body>
+      {post.data.heroAsset ? <AssetImage id={post.data.heroAsset} alt={post.data.heroAlt} eager sizes="(max-width: 760px) 92vw, 760px" class="article-hero-image"/>:post.data.heroImage && <img src={post.data.heroImage} alt={post.data.heroAlt || post.data.title} width="1200" height="675" style="border-radius:6px;margin-bottom:30px" />}
+      <article class="article-body" id="article-content" data-pagefind-body data-reading-id={post.data.contentId}>
         <span hidden data-pagefind-ignore data-pagefind-meta="type">文章</span><span hidden data-pagefind-ignore data-pagefind-filter="type">文章</span>
         <Content />
       </article>
       <div class="article-footer"><p>写下这些文字的：{siteConfig.author}</p><p>内容采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>。转载时请注明作者与原文链接。</p><a href={url}>{url}</a></div>
       <nav class="post-neighbors" aria-label="相邻文章">{older ? <a href={postPath(older)}><small>← 更早的文字</small><span>{older.data.title}</span></a> : <span></span>}{newer ? <a href={postPath(newer)}><small>更新的文字 →</small><span>{newer.data.title}</span></a> : <span></span>}</nav>
+      {topics.map(topic=>{const series=topic.data.posts.flatMap(id=>{const p=posts.find(item=>item.data.contentId===id);return p?[p]:[];}),position=series.findIndex(p=>p.id===post.id),next=series[position+1];return <aside class="article-series" data-pagefind-ignore><span class="eyebrow">专题 · 第 {position+1} / {series.length} 篇</span><a href={'/topics/'+topic.id+'/'}>{topic.data.title} ↗</a>{next&&<a class="text-link" href={postPath(next)}>接着读：{next.data.title} →</a>}</aside>;})}
+      {post.data.updates.filter(u=>u.date.valueOf()<=Date.now()).length>0&&<details class="revision-notes"><summary>这篇文字的修订记录</summary><ul>{post.data.updates.filter(u=>u.date.valueOf()<=Date.now()).map(u=><li><time datetime={u.date.toISOString()}>{formatDate(u.date)}</time> · {u.text}</li>)}</ul></details>}
       {related.length > 0 && <section class="section" data-pagefind-ignore><p class="eyebrow">也许还想读</p>{related.map(item => <a class="mini-project" href={postPath(item)}><strong>{item.data.title} ↗</strong></a>)}</section>}
       <Comments path={postPath(post).replace(/\/$/, '')} />
     </div>

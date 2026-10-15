@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AssetImage from '../../components/AssetImage.astro';
+import SaveButton from '../../components/SaveButton.astro';
+import {publishedGallery} from '../../lib/discovery';
+import {formatDate} from '../../lib/publication';
+const items=await publishedGallery();
+const year=(d:Date)=>new Intl.DateTimeFormat('en',{timeZone:'Asia/Shanghai',year:'numeric'}).format(d);
+const years=[...new Set(items.map(i=>year(i.data.date)))],themes=[...new Set(items.flatMap(i=>i.data.themes))];
+---
+<BaseLayout title="片刻影像" description="照片、插画，以及愿意留下的片刻。">
+  <header class="page-head reveal"><p class="eyebrow">A COLLECTION OF LITTLE MOMENTS</p><h1>片刻影像<span class="accent">。</span></h1><p>让目光停一会儿。每张影像，都可以拥有自己的日期、说明和故事。</p><span class="count">{items.length} 个片刻 · 点击看大图</span></header>
+  <form class="filter-bar" data-collection-filters data-results="gallery" aria-label="筛选影像"><label>年份 <select class="filter-select" name="year"><option value="">全部年份</option>{years.map(y=><option value={y}>{y}</option>)}</select></label><label>主题 <select class="filter-select" name="theme"><option value="">全部主题</option>{themes.map(t=><option value={t}>{t}</option>)}</select></label><button type="reset" class="text-link">重置</button><span class="meta" data-filter-count aria-live="polite"></span></form>
+  <div class="gallery-grid">{items.map(item=><article class="gallery-tile" data-filter-row="gallery" data-year={year(item.data.date)} data-theme={JSON.stringify(item.data.themes)}>
+    <button class="gallery-image" type="button" data-image-open data-image-group="gallery" data-caption={item.data.title+' · '+item.data.description} aria-label={'查看大图：'+item.data.title}><AssetImage id={item.data.assetId} sizes="(max-width: 640px) 90vw, (max-width: 1000px) 45vw, 360px"/><span class="image-hint">查看大图 ↗</span></button>
+    <div class="gallery-caption"><div class="meta"><time datetime={item.data.date.toISOString()}>{formatDate(item.data.date)}</time>{item.data.location&&<span>{item.data.location}</span>}</div><h2><a href={'/gallery/'+item.id+'/'}>{item.data.title} ↗</a></h2><p>{item.data.description}</p><div class="gallery-caption-bottom"><span class="meta">{item.data.themes.join(' / ')}</span><SaveButton id={item.data.contentId}/></div></div>
+  </article>)}</div>
+  <p class="empty-state" data-filter-empty="gallery" hidden={items.length>0}>暂时没有符合条件的影像，换个主题看看。</p>
+</BaseLayout>

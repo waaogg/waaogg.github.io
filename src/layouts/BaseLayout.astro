@@ -6,6 +6,9 @@ import SearchModal from '../components/SearchModal';
 import MusicPlayer from '../components/MusicPlayer';
 import { siteConfig } from '../site.config';
 import '../styles/global.css';
+import '../styles/discovery.css';
+import {publicCatalog} from '../lib/discovery';
+const catalog=await publicCatalog();
 interface Props { title?: string; description?: string; image?: string; article?: boolean; noindex?: boolean; }
 const { title = siteConfig.title, description = siteConfig.description, image, article = false, noindex = false } = Astro.props;
 const pageTitle = title === siteConfig.title ? title : title + ' · ' + siteConfig.title;
@@ -49,7 +52,9 @@ const imageURL = new URL(image || siteConfig.avatar, siteConfig.site).href;
       <div class="shortcut-row"><span>关闭菜单或弹层</span><kbd>Esc</kbd></div>
       <div class="shortcut-row"><span>打开帮助</span><kbd>?</kbd></div>
     </dialog>
-    <dialog id="image-dialog" class="lightbox" aria-label="查看图片"><button type="button" data-lightbox-close aria-label="关闭图片">✕</button><img src="" alt="" /></dialog>
+    <dialog id="image-dialog" class="lightbox" aria-label="查看图片"><button type="button" data-lightbox-close aria-label="关闭图片">✕</button><figure><img alt=""/><figcaption data-image-caption></figcaption><p role="status" data-image-error hidden>图片暂时无法加载，可以切换下一张或关闭后重试。</p></figure><div class="lightbox-controls"><button type="button" data-image-prev aria-label="上一张图片">←</button><span data-image-position aria-live="polite"></span><button type="button" data-image-next aria-label="下一张图片">→</button></div></dialog>
+    <p class="library-toast" role="status" data-library-toast hidden></p>
+    <script is:inline type="application/json" id="library-catalog" set:html={JSON.stringify(catalog).replace(/</g,'\\u003c')}/>
     <script>import '../lib/runtime';</script>
   </body>
 </html>

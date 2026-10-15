@@ -12,6 +12,9 @@ for(const path of html){
   if((text.match(/<h1[\s>]/g)||[]).length!==1)problems.push(page+': must have exactly one h1');
   if(!/<link[^>]+rel="canonical"/.test(text))problems.push(page+': missing canonical');
   if(!/<html[^>]+lang="zh-CN"/.test(text))problems.push(page+': missing language');
+  for(const match of text.matchAll(/srcset="([^"]+)"/g))for(const candidate of match[1].split(',')){
+    const src=candidate.trim().split(/\s+/)[0];if(src.startsWith('/')&&!existsSync(join(root,decodeURIComponent(src))))problems.push(page+': missing responsive image '+src);
+  }
   for(const match of text.matchAll(/(?:href|src)="(\/[^"]*)"/g)){
     const raw=match[1].replace(/&amp;/g,'&'),url=new URL(raw,'https://test.invalid');
     if(!url.pathname||url.pathname==='/')continue;
@@ -24,10 +27,12 @@ for(const path of html){
 }
 assert.deepEqual(problems,[]);
 assert.ok(existsSync('dist/404.html'));assert.ok(existsSync('dist/pagefind/pagefind.js'));assert.ok(existsSync('dist/content-contract.json'));
-for(const path of ['dist/index.html','dist/posts/index.html','dist/memos/index.html','dist/projects/index.html']){
+for(const path of ['dist/index.html','dist/posts/index.html','dist/memos/index.html','dist/projects/index.html','dist/gallery/index.html','dist/topics/index.html','dist/library/index.html','dist/updates/index.html']){
   assert.ok(!readFileSync(path,'utf8').includes('data-pagefind-body'),'Aggregate page must not duplicate search entries: '+path);
 }
 const contract=JSON.parse(readFileSync('dist/content-contract.json','utf8'));
 assert.equal(contract.version,1);assert.equal(contract.schemas.posts.properties.pubDate.type,'string');
 assert.equal(contract.schemas.posts.properties.pubDate.format,'date-time');
+assert.ok(contract.schemas.asset);assert.ok(contract.schemas.gallery);assert.ok(contract.schemas.topics);
+assert.ok(readFileSync('dist/library/index.html','utf8').includes('noindex, follow'));
 console.log('Verified '+html.length+' HTML pages, internal links, canonical metadata, unique search scopes and editor schema.');
