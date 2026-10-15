@@ -1,0 +1,8 @@
+{
+  "title": "Minimal Canvas Motion",
+  "description": "高性能轻量 WebGL / Canvas 交互粒子与流光背景渲染库，适合现代化内容展示站点。",
+  "tech": ["TypeScript", "Canvas", "Three.js"],
+  "githubUrl": "https://github.com",
+  "badge": "动画实验",
+  "featured": true
+}

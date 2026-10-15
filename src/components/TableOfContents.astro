@@ -1,0 +1,81 @@
+---
+import { List } from 'lucide-react';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{filteredHeadings.length > 0 && (
+  <nav class="space-y-2 p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/40 backdrop-blur text-xs craft-card">
+    <div class="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 pb-2 border-b border-zinc-200/60 dark:border-zinc-800/60">
+      <List className="w-3.5 h-3.5 text-indigo-500" />
+      <span>目录导航</span>
+    </div>
+    <ul class="space-y-1.5 max-h-[70vh] overflow-y-auto pr-1">
+      {filteredHeadings.map((heading) => (
+        <li class:list={[heading.depth === 3 ? 'pl-3' : 'pl-0']}>
+          <a
+            href={`#${heading.slug}`}
+            class="toc-link block text-zinc-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors py-0.5 truncate"
+            data-target={heading.slug}
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<script>
+  function setupScrollspy() {
+    const links = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+    if (links.length === 0) return;
+
+    const headingElements: HTMLElement[] = [];
+    links.forEach((link) => {
+      const slug = link.getAttribute('data-target');
+      if (slug) {
+        const el = document.getElementById(slug);
+        if (el) headingElements.push(el);
+      }
+    });
+
+    function onScroll() {
+      const scrollPos = window.scrollY + 100;
+      let currentActiveId = '';
+
+      for (const h of headingElements) {
+        if (h.offsetTop <= scrollPos) {
+          currentActiveId = h.id;
+        } else {
+          break;
+        }
+      }
+
+      links.forEach((link) => {
+        if (link.getAttribute('data-target') === currentActiveId) {
+          link.classList.add('text-indigo-600', 'dark:text-indigo-400', 'font-semibold', 'translate-x-1');
+        } else {
+          link.classList.remove('text-indigo-600', 'dark:text-indigo-400', 'font-semibold', 'translate-x-1');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  setupScrollspy();
+  document.addEventListener('astro:page-load', setupScrollspy);
+</script>

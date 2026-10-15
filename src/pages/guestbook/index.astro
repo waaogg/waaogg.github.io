@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MusicPlayer from '../../components/MusicPlayer';
+import Hitokoto from '../../components/Hitokoto';
+import WalineComments from '../../components/WalineComments';
+import { MessageSquareHeart, ArrowRight, ShieldCheck, Radio } from 'lucide-react';
+import { siteConfig } from '../../site.config';
+---
+
+<BaseLayout
+  title={`留言板 - ${siteConfig.title}`}
+  description="期待您的来信与留言。无论技术探讨、灵感碰撞还是随性问候，均会收到回音。"
+>
+  <div class="space-y-10">
+    <!-- Header with Reveal 1 -->
+    <div class="border-b border-zinc-200/80 dark:border-zinc-800/80 pb-6 reveal-1 space-y-4">
+      <div class="flex items-center gap-2.5">
+        <div class="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-900/60 shadow-2xs">
+          <MessageSquareHeart className="w-6 h-6" />
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            留言板 · 赛博回声
+          </h1>
+          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+            期待您的驻足与留言。在这里留下一片足迹，它将永久沉淀在这座数字花园中。
+          </p>
+        </div>
+      </div>
+
+      <!-- Hitokoto Banner -->
+      <Hitokoto client:load />
+    </div>
+
+    <!-- Ambient Music Player Section with Reveal 2 -->
+    <section class="space-y-3 reveal-2">
+      <div class="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+        <span class="flex items-center gap-1.5">
+          <Radio className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
+          音乐伴奏 · 沉浸写下你想说的话
+        </span>
+        <span class="text-zinc-400 dark:text-zinc-500 text-[11px] font-normal">
+          (点击播放 / 免版权 Lo-Fi)
+        </span>
+      </div>
+      <MusicPlayer client:load />
+    </section>
+
+    <!-- Warm Notice Notion Callout with Reveal 3 -->
+    <section class="reveal-3 p-4 sm:p-5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/40 backdrop-blur craft-card space-y-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+      <div class="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
+        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+        <span>留言与交流指引</span>
+      </div>
+      <ul class="space-y-1.5 list-disc list-inside">
+        <li>欢迎提出技术疑问、交流心得或分享你的个人博客。</li>
+        <li>支持 Markdown 语法与表情；填入有效邮箱可在博主回复时收到即时邮件通知。</li>
+        <li>交换友情链接请移步至专属的 <a href="/friends" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium inline-flex items-center gap-0.5">友情链接页面 <ArrowRight className="w-3 h-3 inline" /></a>。</li>
+      </ul>
+    </section>
+
+    <!-- Dedicated Waline Comment Floor with Reveal 4 -->
+    <section class="reveal-4">
+      <WalineComments client:only="react" path="/guestbook" />
+    </section>
+  </div>
+</BaseLayout>

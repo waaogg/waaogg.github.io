@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Terminal, Cpu, Feather, Zap, Shield, HeartHandshake, Box, Layers } from 'lucide-react';
+import { siteConfig } from '../../site.config';
+
+const colophon = siteConfig.colophon || {
+  framework: 'Astro 5 + React 19',
+  styling: 'Tailwind CSS v4',
+  search: 'Pagefind (静态毫秒级离线全文索引)',
+  comments: 'Waline (轻量独立服务端)',
+  typography: 'Inter / JetBrains Mono / 思源宋体',
+  motion: 'ParticleX Aurora Flow + View Transitions',
+  license: 'MIT / CC BY-NC-SA 4.0',
+  deployment: 'Docker + Nginx Alpine',
+};
+---
+
+<BaseLayout
+  title={`幕后账本 /colophon - ${siteConfig.title}`}
+  description="记录本站的设计哲学、底层技术栈、字体排版、性能表现与版权开源协议。"
+>
+  <div class="space-y-10">
+    <!-- Header with Reveal 1 -->
+    <div class="border-b border-zinc-200/80 dark:border-zinc-800/80 pb-6 reveal-1 space-y-2">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-2.5">
+        <Terminal className="w-6 h-6 text-indigo-500" />
+        幕后账本 · Colophon
+      </h1>
+      <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+        源自古希腊语 “kolophon”（顶峰/收尾）。传统印刷中用于记录书籍的排印与装帧信息；在数字世界，它记录这座赛博小岛的工程底座。
+      </p>
+    </div>
+
+    <!-- Tech Specs Grid with Reveal 2 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal-2">
+      <!-- Framework -->
+      <div class="p-4.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/50 backdrop-blur craft-card space-y-2">
+        <div class="flex items-center gap-2 text-xs font-bold text-indigo-500 uppercase tracking-wider">
+          <Cpu className="w-4 h-4" />
+          <span>核心引擎与框架</span>
+        </div>
+        <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {colophon.framework}
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+          拥抱静态生成（SSG）与局部岛屿架构（Islands Architecture），全站近乎 0 运行时 JS 消耗。
+        </p>
+      </div>
+
+      <!-- Styling -->
+      <div class="p-4.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/50 backdrop-blur craft-card space-y-2">
+        <div class="flex items-center gap-2 text-xs font-bold text-teal-500 uppercase tracking-wider">
+          <Layers className="w-4 h-4" />
+          <span>样式与视觉系统</span>
+        </div>
+        <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {colophon.styling}
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+          基于 Tailwind CSS v4 原生引擎，辅以克制雅致的 Zinc 中性色盘与纸质物理微噪点。
+        </p>
+      </div>
+
+      <!-- Typography -->
+      <div class="p-4.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/50 backdrop-blur craft-card space-y-2">
+        <div class="flex items-center gap-2 text-xs font-bold text-amber-500 uppercase tracking-wider">
+          <Feather className="w-4 h-4" />
+          <span>字体与排版</span>
+        </div>
+        <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {colophon.typography}
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+          代码等宽采用 JetBrains Mono，正文无缝支持现代无衬线与人文思源宋体一键双模切换。
+        </p>
+      </div>
+
+      <!-- Search -->
+      <div class="p-4.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/50 backdrop-blur craft-card space-y-2">
+        <div class="flex items-center gap-2 text-xs font-bold text-purple-500 uppercase tracking-wider">
+          <Zap className="w-4 h-4" />
+          <span>检索与离线搜索</span>
+        </div>
+        <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {colophon.search}
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+          Pagefind 本地静态多语言索引，按 ⌘K 毫秒级匹配，无需维护沉重的 Elasticsearch 或 Algolia 服务。
+        </p>
+      </div>
+
+      <!-- Motion -->
+      <div class="p-4.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/50 backdrop-blur craft-card space-y-2">
+        <div class="flex items-center gap-2 text-xs font-bold text-rose-500 uppercase tracking-wider">
+          <Box className="w-4 h-4" />
+          <span>转场与动效</span>
+        </div>
+        <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {colophon.motion}
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+          ParticleX 灵感柔和极光流体光晕、卡片物理悬浮感知与原生 Astro View Transitions 无缝路由切页。
+        </p>
+      </div>
+
+      <!-- License & Deployment -->
+      <div class="p-4.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/50 backdrop-blur craft-card space-y-2">
+        <div class="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-wider">
+          <Shield className="w-4 h-4" />
+          <span>部署与许可</span>
+        </div>
+        <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {colophon.deployment} · {colophon.license}
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+          预置极速 Alpine 镜像与 Waline 独立容器编排；代码遵循 MIT，原创内容遵循 CC BY-NC-SA 4.0。
+        </p>
+      </div>
+    </div>
+
+    <!-- Design Manifesto with Reveal 3 -->
+    <section class="reveal-3 p-5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/40 backdrop-blur craft-card space-y-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+      <div class="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-100 text-sm">
+        <HeartHandshake className="w-4 h-4 text-indigo-500" />
+        <span>工程与设计底线</span>
+      </div>
+      <p>
+        本站坚持「克制、透明与长期主义」：不收集任何访客追踪 Cookie，不接入侵入式第三方分析脚本，完全依赖离线与本地优先能力。
+      </p>
+    </section>
+  </div>
+</BaseLayout>

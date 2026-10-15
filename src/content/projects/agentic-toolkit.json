@@ -1,0 +1,9 @@
+{
+  "title": "Agentic Workflow Toolkit",
+  "description": "轻量级大模型智能体工作流编排工具库，支持双向工具适配、函数调用与流式状态管理。",
+  "tech": ["Python", "FastAPI", "Docker"],
+  "demoUrl": "https://example.com",
+  "githubUrl": "https://github.com",
+  "badge": "工程实践",
+  "featured": true
+}

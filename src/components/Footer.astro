@@ -1,0 +1,36 @@
+---
+import { siteConfig } from '../site.config';
+import RunningTimer from './RunningTimer';
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-auto border-t border-zinc-200/80 dark:border-zinc-800/80 py-10 transition-colors">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-between gap-6 text-xs text-zinc-500 dark:text-zinc-500">
+    <!-- Live Running Timer -->
+    <div class="w-full flex justify-center sm:justify-start">
+      <RunningTimer client:load />
+    </div>
+
+    <!-- Navigation & Copyright Bar -->
+    <div class="w-full flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span>© {currentYear} {siteConfig.author}. 保留所有权利.</span>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3.5 text-zinc-600 dark:text-zinc-400">
+        <a href="/guestbook" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">留言板</a>
+        <span>·</span>
+        <a href="/now" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">/now 近况</a>
+        <span>·</span>
+        <a href="/colophon" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">/colophon 幕后</a>
+        <span>·</span>
+        <a href="/friends" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">友链</a>
+        <span>·</span>
+        <a href="/rss.xml" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">RSS</a>
+        <span>·</span>
+        <a href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>
