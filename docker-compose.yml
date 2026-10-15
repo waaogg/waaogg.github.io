@@ -30,7 +30,9 @@ services:
     mem_limit: 64m
     cpus: 0.25
   waline:
-    image: lizheming/waline:1.43.4@sha256:a0889757b9d0ffe4a6730440000e84ad0fe7ae93f572f93d03218390447c78c0
+    build:
+      context: deploy/waline
+    image: journal-waline:1.43.4-sqlite13
     profiles: [comments]
     depends_on:
       waline-init:

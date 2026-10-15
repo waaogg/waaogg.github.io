@@ -11,7 +11,7 @@
 - 跨页保持的播放器；两段站内合成轻音，默认暂停，无第三方音源依赖。
 - 可刷新本地一言；代码复制、语言、行高亮和长代码折叠；脚注旁注、图片查看。
 - 统一发布过滤、RSS、sitemap、真实 404、稳定内容 ID、乐观并发内容工具与共享编辑 Schema。
-- 可选 Waline 独立后端、云部署 Docker/Nginx、GitHub 自动构建和发布。
+- 可选 Waline 独立后端、云部署 Docker/Nginx、GitHub Pages 发布脚本与 Actions 模板。
 
 ## 开始
 
